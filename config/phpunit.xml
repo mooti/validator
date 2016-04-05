@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit 
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	backupGlobals="false" 
+	backupStaticAttributes="false" 
+	colors="false"
+	convertErrorsToExceptions="true" 
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true" 
+	forceCoversAnnotation="false"
+	mapTestClassNameToCoveredClassName="false" 
+	processIsolation="true"
+	stopOnError="false" 
+	stopOnFailure="false"
+	stopOnIncomplete="false"
+	stopOnSkipped="false" 
+	syntaxCheck="false"
+	testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader" 
+	strict="false"
+	verbose="false">
+
+	<testsuites>
+		<testsuite name="RegularTestSuite">
+			<directory>../tests/phpunit</directory>			
+		</testsuite>		
+	</testsuites>
+
+	<filter>
+        <whitelist>
+            <directory>../src</directory>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-html" target="../build/logs/html" charset="UTF-8" />
+        <log type="coverage-clover" target="../build/logs/clover.xml" />
+    </logging>
+
+</phpunit>
