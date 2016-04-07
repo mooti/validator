@@ -175,7 +175,7 @@ class ValidatorFunctionalTest extends \PHPUnit_Framework_TestCase
                 ],
                 false,
                 [
-                    'nickNames.*' => ['This value must be a string']
+                    'nickNames.*' => ['Item[0] : This value must be a string']
                 ]
             ],
             [
@@ -191,7 +191,7 @@ class ValidatorFunctionalTest extends \PHPUnit_Framework_TestCase
                 ],
                 false,
                 [
-                    'nickNames.*' => ['This value must be a string']
+                    'nickNames.*' => ['Item[1] : This value must be a string']
                 ]
             ],
             [

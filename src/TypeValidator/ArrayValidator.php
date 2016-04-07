@@ -31,7 +31,7 @@ class ArrayValidator implements TypeValidatorInterface
         if (gettype($data) == 'array') {
             $this->validateSequantialArray($data);
         } else {
-            throw new DataValidationException('This value must be a sequantial array');
+            throw new DataValidationException('This value must be a sequential array');
         }
     }
 
