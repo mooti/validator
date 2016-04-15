@@ -1,10 +1,10 @@
 <?php
 
-namespace Mooti\Test\PHPUnit\Validator;
+namespace Mooti\Test\PHPUnit\Validator\Functional;
 
 use Mooti\Validator\Validator;
 
-class ValidatorFunctionalTest extends \PHPUnit_Framework_TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test

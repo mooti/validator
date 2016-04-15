@@ -2,8 +2,7 @@
     "name":"mooti/validator",
     "license": "Apache-2.0",
     "require": {
-        "php": ">=5.5.9",
-        "mooti/xizlr-testable": "1.0.*"        
+        "php": ">=5.5.9"
     },
     "require-dev": {
         "phpunit/phpunit": "5.1.*",

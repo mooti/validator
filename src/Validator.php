@@ -2,7 +2,10 @@
 /**
  * Validator
  *
- * Validator class
+ * Main validator class
+ *
+ * This is the main class for validation. It will validate a data structure
+ * based on teh validation rules you give it.
  *
  * @package      Mooti
  * @subpackage   Validator
@@ -34,17 +37,39 @@ class Validator
     protected $errors = [];
     protected $typeValidators = [];
 
-    public function hasErrors()
-    {
-        return (sizeof($this->errors) > 0);
-    }
-
+    /**
+     * Add an error to the internal error array
+     *
+     * @param string $errorKey   The key to use for the error
+     * @param string $errorValue The description of the error
+     *
+     */
     public function addError($errorKey, $errorValue)
     {
         if (!isset($this->errors[$errorKey])) {
             $this->errors[$errorKey] = [];
         }
         $this->errors[$errorKey][] = $errorValue;
+    }
+
+    /**
+     * Indicates wether we have errors or not     
+     *
+     * @return boolean Wether there are any erros
+     */
+    public function hasErrors()
+    {
+        return (sizeof($this->errors) > 0);
+    }
+
+    /**
+     * Get all errors
+     *
+     * @return array An array of errors
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
 
     /**
@@ -55,7 +80,7 @@ class Validator
      *
      * @return boolean Whether it was valid or not
      */
-    public function isValid(array $validationRules, array $data, $nameSpacePrefix = '')
+    public function isValid(array $validationRules, array $data, $nameSpace = '')
     {
         foreach ($validationRules as $itemKey => $validationRule) {
 
@@ -66,30 +91,14 @@ class Validator
 
             // There can only be one rule if using wildcards
             if ($itemKey == '*' && count($validationRules) > 1) {
-                throw new InvalidRuleException('There can only be one rule if using wildcards');
+                throw new InvalidRuleException('You cannot have more than one rule if using a wildcard');
             }
-
-            $fullKeyName    = $nameSpacePrefix.$itemKey;
-            $validationType = $validationRule['type'];
 
             try {
-                if ($itemKey == '*') {
-                    $validated = $this->validateMultipleItems($validationRule, $data);
-                } else {
-                    $validated = $this->validateSingleItem($validationRule, $itemKey, $data);                    
-                }
-                if ($validated == false) {
-                    continue;
-                }
+                $fullyQualifiedName = $nameSpace . (empty($nameSpace) == false ?'.':'') .$itemKey;
+                $this->validateData($validationRule, $itemKey, $data, $fullyQualifiedName);
             } catch (DataValidationException $e) {
-                $this->addError($fullKeyName, $e->getMessage());
-                continue;
-            }
-
-            if ($validationType == 'object' && isset($validationRule['properties']) && is_array($validationRule['properties'])) {
-                $this->isValid($validationRule['properties'], $this->getProperty($itemKey, $data), $fullKeyName . '.');
-            } elseif ($validationType == 'array' && isset($validationRule['items']) && is_array($validationRule['items'])) {
-                $this->isValid($validationRule['items'], $this->getProperty($itemKey, $data), $fullKeyName . '.');
+                $this->addError($fullyQualifiedName, $e->getMessage());
             }
         };
 
@@ -100,24 +109,44 @@ class Validator
         }
     }
 
-    public function validateSingleItem(array $validationRule, $itemKey, $data)
+    public function validateData(array $validationRule, $itemKey, $data, $fullyQualifiedName)
     {
-        // All named rules need to let us know if they are required or not
-        if (isset($validationRule['required']) == false) {
-            throw new InvalidRuleException('A named rule must have a "required" property');
+        if ($itemKey == '*') {
+            $this->validateMultipleItems($validationRule, $data);
+        } else {
+            // All named rules need to let us know if they are required or not
+            if (isset($validationRule['required']) == false) {
+                throw new InvalidRuleException('A named rule must have a "required" property');
+            }
+
+            if ($validationRule['required'] == true && $this->propertyExists($itemKey, $data) == false) {
+                throw new DataValidationException('This value is required');
+            } elseif ($validationRule['required'] == false && $this->propertyExists($itemKey, $data) == false) {
+                //The item does not exist and is not required so no need to validate
+                return false;
+            }
+
+            $item = $this->getProperty($itemKey, $data);
+            $this->validateItem($validationRule, $item);
         }
 
-        if ($validationRule['required'] == true && $this->propertyExists($itemKey, $data) == false) {
-            throw new DataValidationException('This value is required');
-        } elseif ($validationRule['required'] == false && $this->propertyExists($itemKey, $data) == false) {
-            //The item does not exist and is not required so no need to validate
-            return false;
+        $validationType = $validationRule['type'];
+
+        if ($validationType == 'object' && isset($validationRule['properties']) && is_array($validationRule['properties'])) {
+            $this->isValid($validationRule['properties'], $this->getProperty($itemKey, $data), $fullyQualifiedName);
+        } elseif ($validationType == 'array' && isset($validationRule['items']) && is_array($validationRule['items'])) {
+            $this->isValid($validationRule['items'], $this->getProperty($itemKey, $data), $fullyQualifiedName);
         }
 
+        return true;
+    }
+
+    public function validateItem(array $validationRule, $item)
+    {
         $typeValidator = $this->getTypeValidator($validationRule['type']);
         
         $constraints = isset($validationRule['constraints']) ? $validationRule['constraints'] : []; 
-        $typeValidator->validate($constraints, $this->getProperty($itemKey, $data));
+        $typeValidator->validate($constraints, $item);
 
         return true;
     }
@@ -134,6 +163,8 @@ class Validator
         } catch (DataValidationException $e) {
             throw new DataValidationException('Item['.$i.'] : '.$e->getMessage());
         }
+
+        return true;
     }
 
     public function propertyExists($property, $data)
@@ -173,15 +204,5 @@ class Validator
         }
 
         return $this->typeValidators[$type];
-    }
-
-    /**
-     * Get type validators
-     *
-     * @return array An array of errors
-     */
-    public function getErrors()
-    {
-        return $this->errors;
     }
 }
