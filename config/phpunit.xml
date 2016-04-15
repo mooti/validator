@@ -21,9 +21,12 @@
 	bootstrap="../vendor/autoload.php">
 
 	<testsuites>
-		<testsuite name="RegularTestSuite">
-			<directory>../tests/phpunit</directory>			
-		</testsuite>		
+		<testsuite name="Unit">
+			<directory>../tests/phpunit/Unit</directory>			
+		</testsuite>
+		<testsuite name="Functional">
+			<directory>../tests/phpunit/Functional</directory>			
+		</testsuite>
 	</testsuites>
 
 	<filter>

@@ -29,7 +29,7 @@ class ArrayValidator implements TypeValidatorInterface
     public function validate(array $constraints, $data)
     {
         if (gettype($data) == 'array') {
-            $this->validateSequantialArray($data);
+            return $this->validateSequantialArray($data);
         } else {
             throw new DataValidationException('This value must be a sequential array');
         }

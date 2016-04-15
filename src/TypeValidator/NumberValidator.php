@@ -36,7 +36,7 @@ class NumberValidator implements TypeValidatorInterface
             $this->validateInteger($data, $constraints['integer']);
         }
 
-        return true;        
+        return true;
     }
 
     public function validateInteger($data, $isInt)
