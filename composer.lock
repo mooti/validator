@@ -4,9 +4,43 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ec41a501d640b31dd27e8daafed59a46",
-    "content-hash": "35536c69c53ab3fa2751270e8ccf8f93",
-    "packages": [],
+    "hash": "4c2bf36c133aea1351663a37880d47c4",
+    "content-hash": "b8d929aef282e853a6027ce712a11dab",
+    "packages": [
+        {
+            "name": "mooti/testable",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mooti/testable.git",
+                "reference": "b601787c6f3776a0a880a08e3b92a57df17186b4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mooti/testable/zipball/b601787c6f3776a0a880a08e3b92a57df17186b4",
+                "reference": "b601787c6f3776a0a880a08e3b92a57df17186b4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "5.1.*",
+                "satooshi/php-coveralls": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mooti\\Testable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "time": "2016-04-13 16:22:44"
+        }
+    ],
     "packages-dev": [
         {
             "name": "doctrine/instantiator",

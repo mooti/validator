@@ -11,7 +11,7 @@
 
 namespace Mooti\Validator\TypeValidator;
 
-use Mooti\Xizlr\Testable\Testable;
+use Mooti\Testable\Testable;
 use Mooti\Validator\Exception\DataValidationException;
 
 class NumberValidator implements TypeValidatorInterface
@@ -35,15 +35,19 @@ class NumberValidator implements TypeValidatorInterface
         if (isset($constraints['integer'])) {
             $this->validateInteger($data, $constraints['integer']);
         }
-
-        return true;
     }
 
+    /**
+     * Validate that the data is/is not an integer
+     *
+     * @param array $data The data to validate
+     *
+     * @throws DataValidationException
+     */
     public function validateInteger($data, $isInt)
     {
         if ($isInt != is_int($data)) {
             throw new DataValidationException('This value must '.($isInt == false?'not':'').' be an integer');
         }
-        return true;
     }
 }

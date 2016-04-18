@@ -11,7 +11,7 @@
 
 namespace Mooti\Validator\TypeValidator;
 
-use Mooti\Xizlr\Testable\Testable;
+use Mooti\Testable\Testable;
 use Mooti\Validator\Exception\DataValidationException;
 
 class ArrayValidator implements TypeValidatorInterface
@@ -19,28 +19,34 @@ class ArrayValidator implements TypeValidatorInterface
     use Testable;
     
     /**
-     * Validate some data
+     * Validate some data and throw an exception if the data invalid
      *
      * @param array $constraints The rules
      * @param mixed $data        The data to validate
      *
-     * @return boolean Wether it was valid or not
+     * @throws DataValidationException
      */
     public function validate(array $constraints, $data)
     {
         if (gettype($data) == 'array') {
-            return $this->validateSequantialArray($data);
+            $this->validateSequentialArray($data);
         } else {
             throw new DataValidationException('This value must be a sequential array');
         }
     }
 
-    public function validateSequantialArray(array $data)
+    /**
+     * Validate that array is sequential
+     *
+     * @param array $data The data to validate
+     *
+     * @throws DataValidationException
+     */
+    public function validateSequentialArray(array $data)
     {
         //if the array has to have keys that are both numeric AND sequential
         if (!empty($data) && array_keys($data) !== range(0, count($data) - 1)) {
             throw new DataValidationException('This value is an array but it is not sequential');
         }
-        return true;
     }
 }

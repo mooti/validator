@@ -5,6 +5,10 @@ namespace Mooti\Test\PHPUnit\Validator\Unit;
 use Mooti\Validator\Validator;
 use Mooti\Validator\Exception\DataValidationException;
 use Mooti\Validator\TypeValidator\TypeValidatorInterface;
+use Mooti\Validator\TypeValidator\StringValidator;
+use Mooti\Validator\TypeValidator\NumberValidator;
+use Mooti\Validator\TypeValidator\ObjectValidator;
+use Mooti\Validator\TypeValidator\ArrayValidator;
 
 class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -109,9 +113,9 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $validator->expects(self::exactly(3))
             ->method('validateData')
             ->withConsecutive(
-                [self::equalTo($validationRule), self::equalTo('bar1'), self::equalTo('foo.bar1'), self::equalTo($data)],
-                [self::equalTo($validationRule), self::equalTo('bar2'), self::equalTo('foo.bar2'), self::equalTo($data)],
-                [self::equalTo($validationRule), self::equalTo('bar3'), self::equalTo('foo.bar3'), self::equalTo($data)]
+                [self::equalTo($validationRule), self::equalTo('bar1'), self::equalTo($data), self::equalTo('foo.bar1')],
+                [self::equalTo($validationRule), self::equalTo('bar2'), self::equalTo($data), self::equalTo('foo.bar2')],
+                [self::equalTo($validationRule), self::equalTo('bar3'), self::equalTo($data), self::equalTo('foo.bar3')]
             );
 
         $validator->expects(self::once())
@@ -150,8 +154,8 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ->with(
                 self::equalTo($validationRule),
                 self::equalTo('bar'),
-                self::equalTo('foo.bar'),
-                self::equalTo($data)                
+                self::equalTo($data),
+                self::equalTo('foo.bar')                
             )
             ->will(self::throwException(new DataValidationException('this is an error message')));
 
@@ -188,11 +192,11 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ->method('validateMultipleItems')
             ->with(
                 self::equalTo($validationRule),
-                self::equalTo($fullyQualifiedName),
-                self::equalTo($data)
+                self::equalTo($data),
+                self::equalTo($fullyQualifiedName)
             );
 
-        self::assertTrue($validator->validateData($validationRule, $itemKey, $fullyQualifiedName, $data));
+        $validator->validateData($validationRule, $itemKey, $data, $fullyQualifiedName);
     }
 
     /**
@@ -215,7 +219,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @expectedException Mooti\Validator\Exception\DataValidationException
-     * @DataValidationException This value is required
+     * @expectedExceptionMessage This value is required
      */
     public function validateDataThrowsDataValidationException()
     {
@@ -227,15 +231,26 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $fullyQualifiedName = 'hello';
         $data = []; 
 
-        $validator = new Validator;
+        $validator = $this->getMockBuilder(Validator::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['propertyExists'])
+            ->getMock();
 
-        $validator->validateData($validationRule, $itemKey, $fullyQualifiedName, $data);
+        $validator->expects(self::once())
+            ->method('propertyExists')
+            ->with(
+                self::equalTo($itemKey),
+                self::equalTo($data)
+            )
+            ->will(self::returnValue(false));
+
+        $validator->validateData($validationRule, $itemKey, $data, $fullyQualifiedName);
     }
 
     /**
      * @test     
      */
-    public function validateDataReturnsFalse()
+    public function validateDataReturnsIgnoresItem()
     {
         $itemKey = 'hello';
         $validationRule = [
@@ -245,9 +260,20 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $fullyQualifiedName = 'hello';
         $data = []; 
 
-        $validator = new Validator;
+        $validator = $this->getMockBuilder(Validator::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['propertyExists'])
+            ->getMock();
 
-        self::assertFalse($validator->validateData($validationRule, $itemKey, $fullyQualifiedName, $data));
+        $validator->expects(self::once())
+            ->method('propertyExists')
+            ->with(
+                self::equalTo($itemKey),
+                self::equalTo($data)
+            )
+            ->will(self::returnValue(false));
+
+        $validator->validateData($validationRule, $itemKey, $data, $fullyQualifiedName);
     }
 
     /**
@@ -268,7 +294,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
         $validator = $this->getMockBuilder(Validator::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getProperty', 'validateItem'])
+            ->setMethods(['getProperty', 'validateItem', 'propertyExists'])
             ->getMock();
 
         $validator->expects(self::once())
@@ -287,7 +313,15 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                 self::equalTo($fullyQualifiedName)
             );
 
-        self::assertTrue($validator->validateData($validationRule, $itemKey, $fullyQualifiedName, $data));
+        $validator->expects(self::once())
+            ->method('propertyExists')
+            ->with(
+                self::equalTo($itemKey),
+                self::equalTo($data)
+            )
+            ->will(self::returnValue(true));
+
+        $validator->validateData($validationRule, $itemKey, $data, $fullyQualifiedName);
     }
 
     /**
@@ -295,12 +329,14 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateItemReturnsTrue()
     {
-        $this->markTestIncomplete();
-
         $itemKey = 'foo';
+        $constraints = [
+            'length' => [1, null]
+        ];
         $validationRule = [
             'type' => 'string',
-            'required' => false
+            'required' => false,
+            'constraints' => $constraints
         ];
         $fullyQualifiedName = 'foo';
         $item = 'bar';
@@ -309,12 +345,11 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['validate'])
             ->getMock();
 
-        $validator->expects(self::once())
-            ->method('validateItem')
+        $typeValidator->expects(self::once())
+            ->method('validate')
             ->with(
-                self::equalTo($validationRule),
-                self::equalTo($item),
-                self::equalTo($fullyQualifiedName)
+                self::equalTo($constraints),
+                self::equalTo($item)
             );
 
         $validator = $this->getMockBuilder(Validator::class)
@@ -325,13 +360,297 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $validator->expects(self::once())
             ->method('getTypeValidator')
             ->with(
-                self::equalTo($itemKey),
-                self::equalTo($data)
+                self::equalTo('string')
             )
-            ->will(self::returnValue($item));
+            ->will(self::returnValue($typeValidator));
 
 
-        self::assertTrue($validator->validateItem($validationRule, $item, $fullyQualifiedName));
+        $validator->validateItem($validationRule, $item, $fullyQualifiedName);
     }
 
+    /**
+     * @test
+     */
+    public function validateItemObjectReturnsTrue()
+    {
+        $itemKey = 'foo';
+        $constraints = [];
+        $properties = [
+            'foo1' => [],
+            'foo2' => []
+        ];
+
+        $validationRule = [
+            'type'        => 'object',
+            'required'    => false,
+            'constraints' => $constraints,
+            'properties'  => $properties
+        ];
+        $fullyQualifiedName = 'foo';
+        $item = 'bar';
+
+        $typeValidator = $this->getMockBuilder(TypeValidatorInterface::class)
+            ->setMethods(['validate'])
+            ->getMock();
+
+        $typeValidator->expects(self::once())
+            ->method('validate')
+            ->with(
+                self::equalTo($constraints),
+                self::equalTo($item)
+            );
+
+        $validator = $this->getMockBuilder(Validator::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getTypeValidator', 'isValid'])
+            ->getMock();
+
+        $validator->expects(self::once())
+            ->method('getTypeValidator')
+            ->with(
+                self::equalTo('object')
+            )
+            ->will(self::returnValue($typeValidator));
+
+        $validator->expects(self::once())
+            ->method('isValid')
+            ->with(
+                self::equalTo($properties),
+                self::equalTo($item),
+                self::equalTo($fullyQualifiedName)
+            );
+
+        $validator->validateItem($validationRule, $item, $fullyQualifiedName);
+    }
+
+    /**
+     * @test
+     */
+    public function validateItemArrayReturnsTrue()
+    {
+        $itemKey = 'foo';
+        $constraints = [];
+        $items = [
+            'foo1' => [],
+            'foo2' => []
+        ];
+
+        $validationRule = [
+            'type'        => 'array',
+            'required'    => false,
+            'constraints' => $constraints,
+            'items'       => $items
+        ];
+        $fullyQualifiedName = 'foo';
+        $item = 'bar';
+
+        $typeValidator = $this->getMockBuilder(TypeValidatorInterface::class)
+            ->setMethods(['validate'])
+            ->getMock();
+
+        $typeValidator->expects(self::once())
+            ->method('validate')
+            ->with(
+                self::equalTo($constraints),
+                self::equalTo($item)
+            );
+
+        $validator = $this->getMockBuilder(Validator::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getTypeValidator', 'isValid'])
+            ->getMock();
+
+        $validator->expects(self::once())
+            ->method('getTypeValidator')
+            ->with(
+                self::equalTo('array')
+            )
+            ->will(self::returnValue($typeValidator));
+
+        $validator->expects(self::once())
+            ->method('isValid')
+            ->with(
+                self::equalTo($items),
+                self::equalTo($item),
+                self::equalTo($fullyQualifiedName)
+            );
+
+        $validator->validateItem($validationRule, $item, $fullyQualifiedName);
+    }
+
+    /**
+     * @test
+     * @expectedException Mooti\Validator\Exception\DataValidationException
+     * @expectedExceptionMessage Item[1] : something bad
+     */
+    public function validateMultipleItemsThrowsDataValidationException()
+    {
+        $validationRule = [
+            'type' => 'string'
+        ];
+        $fullyQualifiedName = 'hello';
+        $items = [1, 'hello']; 
+
+        $validator = $this->getMockBuilder(Validator::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['validateItem'])
+            ->getMock();
+
+        $validator->expects(self::once())
+            ->method('validateItem')
+            ->with(
+                self::equalTo($validationRule),
+                self::equalTo(1),
+                self::equalTo($fullyQualifiedName)
+            )
+            ->will(self::throwException(new DataValidationException('something bad')));
+
+        $validator->validateMultipleItems($validationRule, $items, $fullyQualifiedName);
+    }
+
+    /**
+     * @test
+     */
+    public function validateMultipleItemsSucceeds()
+    {
+        $validationRule = [
+            'type' => 'string'
+        ];
+        $fullyQualifiedName = 'hello';
+        $items = ['foo', 'bar']; 
+
+        $validator = $this->getMockBuilder(Validator::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['validateItem'])
+            ->getMock();
+
+        $validator->expects(self::exactly(2))
+            ->method('validateItem')
+            ->withConsecutive(
+                [ self::equalTo($validationRule), self::equalTo('foo'), self::equalTo($fullyQualifiedName)],
+                [ self::equalTo($validationRule), self::equalTo('bar'), self::equalTo($fullyQualifiedName)]
+            );
+
+        $validator->validateMultipleItems($validationRule, $items, $fullyQualifiedName);
+    }
+
+    /**
+     * @test
+     */
+    public function propertyExistsArraySucceeds()
+    {
+        $property = 'foo';
+        $data = ['foo' => 'bar'];
+
+        $validator = new Validator;
+        self::assertTrue($validator->propertyExists($property, $data));
+    }
+
+    /**
+     * @test
+     */
+    public function propertyExistsObjectSucceeds()
+    {
+        $property = 'foo';
+        $data = (object) ['foo' => 'bar'];
+
+        $validator = new Validator;
+        self::assertTrue($validator->propertyExists($property, $data));
+    }
+
+    /**
+     * @test
+     */
+    public function propertyExistsOtherReturnsFalse()
+    {
+        $property = 'foo';
+        $data = 'foobar';
+
+        $validator = new Validator;
+        self::assertFalse($validator->propertyExists($property, $data));
+    }
+
+    /**
+     * @test
+     */
+    public function getPropertyArraySucceeds()
+    {
+        $property = 'foo';
+        $data = ['foo' => 'bar'];
+
+        $validator = new Validator;
+        self::assertEquals('bar', $validator->getProperty($property, $data));
+    }
+
+    /**
+     * @test
+     */
+    public function getPropertyObjectSucceeds()
+    {
+        $property = 'foo';
+        $data = (object) ['foo' => 'bar'];
+
+        $validator = new Validator;
+        self::assertEquals('bar', $validator->getProperty($property, $data));
+    }
+
+    /**
+     * @test
+     */
+    public function getPropertyOtherReturnsNull()
+    {
+        $property = 'foo';
+        $data = 'foobar';
+
+        $validator = new Validator;
+        self::assertNull($validator->getProperty($property, $data));
+    }
+
+    /**
+     * @test
+     * @expectedException Mooti\Validator\Exception\InvalidTypeValidatorException
+     * @expectedExceptionMessage The type "foo" is invalid
+     */
+    public function getTypeValidatorThrowsInvalidTypeValidatorException()
+    {
+        $type = 'foo';
+        $validator = new Validator;
+        $validator->getTypeValidator($type);
+    }
+
+    /**
+     * @test
+     * @dataProvider validTypes
+     */
+    public function getTypeValidatorSucceeds($type, $className)
+    {
+        $typeValidator = $this->getMockBuilder(TypeValidatorInterface::class)
+            ->setMethods(['validate'])
+            ->getMock();
+
+        $validator = $this->getMockBuilder(Validator::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['createNew'])
+            ->getMock();
+
+        $validator->expects(self::once())
+            ->method('createNew')
+            ->with(
+                self::equalTo($className)
+            )
+            ->will(self::returnValue($typeValidator));
+
+        self::assertSame($typeValidator, $validator->getTypeValidator($type));
+        self::assertSame($typeValidator, $validator->getTypeValidator($type));
+    }
+
+    public function validTypes()
+    {
+        return [
+            ['string', StringValidator::class],
+            ['number', NumberValidator::class],
+            ['object', ObjectValidator::class],
+            ['array',  ArrayValidator::class]
+        ];
+    }
 }

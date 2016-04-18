@@ -5,7 +5,7 @@
  * Main validator class
  *
  * This is the main class for validation. It will validate a data structure
- * based on teh validation rules you give it.
+ * based on the validation rules you give it.
  *
  * @package      Mooti
  * @subpackage   Validator
@@ -14,9 +14,10 @@
 
 namespace Mooti\Validator;
 
-use Mooti\Xizlr\Testable\Testable;
+use Mooti\Testable\Testable;
 use Mooti\Validator\Exception\InvalidRuleException;
 use Mooti\Validator\Exception\DataValidationException;
+use Mooti\Validator\Exception\InvalidTypeValidatorException;
 
 class Validator
 {
@@ -73,7 +74,8 @@ class Validator
     }
 
     /**
-     * Validate the data
+     * Validate data against a set of validation rules.
+     * This will attempt to validate the members of the given array/object 
      *
      * @param array $validationRules The validaton rules
      * @param mixed $data            The data to validate
@@ -97,7 +99,7 @@ class Validator
 
             try {
                 $fullyQualifiedName = $nameSpace . (empty($nameSpace) == false ?'.':'') .$itemKey;
-                $this->validateData($validationRule, $itemKey, $fullyQualifiedName, $data);
+                $this->validateData($validationRule, $itemKey, $data, $fullyQualifiedName);
             } catch (DataValidationException $e) {
                 $this->addError($fullyQualifiedName, $e->getMessage());
             }
@@ -116,16 +118,15 @@ class Validator
      *
      * @param array  $validationRule     The rule to validate against
      * @param string $itemKey            The key for the item in data to validate. Use * for all items
-     * @param string $fullyQualifiedName The fully qualified name of the item being validated
      * @param mixed  $data               The data to validate against. should be an array or an object
+     * @param string $fullyQualifiedName The fully qualified name of the item being validated     
      *
      * @throws DataValidationException
-     * @return boolean True if valid, false if there's no need for validation. Throws/Bubbles up a DataValidationException if it's invalid
      */
-    public function validateData(array $validationRule, $itemKey, $fullyQualifiedName, $data)
+    public function validateData(array $validationRule, $itemKey, $data, $fullyQualifiedName)
     {
         if ($itemKey == '*') {
-            $this->validateMultipleItems($validationRule, $fullyQualifiedName, $data);
+            $this->validateMultipleItems($validationRule, $data, $fullyQualifiedName);
         } else {
             // All named rules need to let us know if they are required or not
             if (isset($validationRule['required']) == false) {
@@ -136,14 +137,12 @@ class Validator
                 throw new DataValidationException('This value is required');
             } elseif ($validationRule['required'] == false && $this->propertyExists($itemKey, $data) == false) {
                 //The item does not exist and is not required so no need to validate
-                return false;
+                return;
             }
 
             $item = $this->getProperty($itemKey, $data);
             $this->validateItem($validationRule, $item, $fullyQualifiedName);
         }
-
-        return true;
     }
 
     /**
@@ -153,7 +152,6 @@ class Validator
      * @param string $item               The item to validate
      * @param string $fullyQualifiedName The fully qualified name of the item being validated
      *
-     * @return boolean Whether it was valid or not
      */
     public function validateItem(array $validationRule, $item, $fullyQualifiedName)
     {
@@ -164,64 +162,82 @@ class Validator
 
         $validationType = $validationRule['type'];
 
-        $valid = true;
-
         if ($validationType == 'object' && isset($validationRule['properties']) && is_array($validationRule['properties'])) {
-            $valid = $this->isValid($validationRule['properties'], $item, $fullyQualifiedName);
+            $this->isValid($validationRule['properties'], $item, $fullyQualifiedName);
         } elseif ($validationType == 'array' && isset($validationRule['items']) && is_array($validationRule['items'])) {
-            $valid = $this->isValid($validationRule['items'], $item, $fullyQualifiedName);
+            $this->isValid($validationRule['items'], $item, $fullyQualifiedName);
         }
-
-        return $valid;
     }
 
-    public function validateMultipleItems(array $validationRule, $fullyQualifiedName, array $data)
-    {   
-        $finalValid = true;
-
+    /**
+     * Validate a multile items using the given validation rule.
+     *
+     * @param array  $validationRule     The rule to validate against     
+     * @param array  $items              The and array of items
+     * @param string $fullyQualifiedName The fully qualified name of the item being validated
+     *
+     */
+    public function validateMultipleItems(array $validationRule, array $items, $fullyQualifiedName)
+    {
         try {
-            for ($i = 0; $i < sizeof($data); $i++) {
-                $valid = $this->validateItem($validationRule, $data[$i], $fullyQualifiedName);
-                if ($valid == false) {
-                    $finalValid = false;
-                }
+            $itemNumber = 1;
+            foreach ($items as $item) {
+                $this->validateItem($validationRule, $item, $fullyQualifiedName);
+                $itemNumber++;
             }
         } catch (DataValidationException $e) {
-            throw new DataValidationException('Item['.$i.'] : '.$e->getMessage());
+            throw new DataValidationException('Item['.$itemNumber.'] : '.$e->getMessage());
         }
-
-        return $finalValid;
     }
 
-    public function propertyExists($property, $data)
+    /**
+     * Determines wether an object or array has a given property/key.
+     *
+     * @param array  $property The name of the property/key
+     * @param array  $item     The item to check against
+     *
+     * @return boolean. Whether it exists or not
+     */
+    public function propertyExists($property, $item)
     {
-        if (gettype($data) == 'array') {
-            return array_key_exists($property, $data);
-        } elseif (gettype($data) == 'object') {
-            return property_exists($data , $property);
+        if (gettype($item) == 'array') {
+            return array_key_exists($property, $item);
+        } elseif (gettype($item) == 'object') {
+            return property_exists($item , $property);
         }
         return false;
     }
 
-    public function getProperty($property, $data)
+    /**
+     * Get a property/key from an object/arrray.
+     *
+     * @param array  $property The name of the property/key
+     * @param array  $item     The item to retrieve from
+     *
+     * @return mixed The property/key value
+     */
+    public function getProperty($property, $item)
     {
-        if (gettype($data) == 'array') {
-            return $data[$property];
-        } elseif (gettype($data) == 'object') {
-            return $data->$property;
+        if (gettype($item) == 'array') {
+            return $item[$property];
+        } elseif (gettype($item) == 'object') {
+            return $item->$property;
         }
         return null;
     }
 
     /**
-     * Get any validation errors generated
+     * Get a type validator
      *
+     * @param string $type. The data type to get the validator for
+     *
+     * @throws InvalidTypeValidatorException
      * @return TypeValidatorInterface The type validator
      */
     public function getTypeValidator($type)
     {
         if (in_array($type, $this->allowedTypeValidators, true) == false) {
-            throw new InvalidTypeValidatorException('The type "'.$type.'"" is invalid');
+            throw new InvalidTypeValidatorException('The type "'.$type.'" is invalid');
         }
 
         if (isset($this->typeValidators[$type]) == false) {

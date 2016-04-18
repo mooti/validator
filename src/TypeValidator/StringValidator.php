@@ -11,8 +11,9 @@
 
 namespace Mooti\Validator\TypeValidator;
 
-use Mooti\Xizlr\Testable\Testable;
+use Mooti\Testable\Testable;
 use Mooti\Validator\Exception\DataValidationException;
+use Mooti\Validator\Exception\InvalidRuleException;
 
 class StringValidator implements TypeValidatorInterface
 {
@@ -33,13 +34,11 @@ class StringValidator implements TypeValidatorInterface
         }
 
         if (isset($constraints['length'])) {
-            if (sizeof($constraints['length']) < 2) {
+            if (sizeof($constraints['length']) != 2) {
                 throw new InvalidRuleException('The length property needs to have two members');
             }
             $this->validateLength($data, $constraints['length'][0], $constraints['length'][1]);
-        }
-
-        return true;        
+        }       
     }
 
     public function validateLength($data, $min = null, $max = null)
