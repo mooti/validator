@@ -1,10 +1,10 @@
 <?php
 
-namespace Mooti\Test\PHPUnit\Validator;
+namespace Mooti\Test\PHPUnit\Validator\Functional;
 
 use Mooti\Validator\Validator;
 
-class ValidatorFunctionalTest extends \PHPUnit_Framework_TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -175,7 +175,7 @@ class ValidatorFunctionalTest extends \PHPUnit_Framework_TestCase
                 ],
                 false,
                 [
-                    'nickNames.*' => ['This value must be a string']
+                    'nickNames.*' => ['Item[1] : This value must be a string']
                 ]
             ],
             [
@@ -191,7 +191,7 @@ class ValidatorFunctionalTest extends \PHPUnit_Framework_TestCase
                 ],
                 false,
                 [
-                    'nickNames.*' => ['This value must be a string']
+                    'nickNames.*' => ['Item[2] : This value must be a string']
                 ]
             ],
             [
