@@ -14,14 +14,14 @@
 
 namespace Mooti\Validator;
 
-use Mooti\Testable\Testable;
+use Mooti\Factory\Factory;
 use Mooti\Validator\Exception\InvalidRuleException;
 use Mooti\Validator\Exception\DataValidationException;
 use Mooti\Validator\Exception\InvalidTypeValidatorException;
 
 class Validator
 {
-    use Testable;
+    use Factory;
 
     const TYPE_STRING = 'string';
     const TYPE_NUMBER = 'number';

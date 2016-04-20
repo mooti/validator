@@ -11,12 +11,12 @@
 
 namespace Mooti\Validator\TypeValidator;
 
-use Mooti\Testable\Testable;
+use Mooti\Factory\Factory;
 use Mooti\Validator\Exception\DataValidationException;
 
 class ArrayValidator implements TypeValidatorInterface
 {
-    use Testable;
+    use Factory;
     
     /**
      * Validate some data and throw an exception if the data invalid

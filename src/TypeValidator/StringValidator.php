@@ -11,13 +11,13 @@
 
 namespace Mooti\Validator\TypeValidator;
 
-use Mooti\Testable\Testable;
+use Mooti\Factory\Factory;
 use Mooti\Validator\Exception\DataValidationException;
 use Mooti\Validator\Exception\InvalidRuleException;
 
 class StringValidator implements TypeValidatorInterface
 {
-    use Testable;
+    use Factory;
     
     /**
      * Validate some data
