@@ -1,11 +1,11 @@
 # Mooti Validator
 
-[![Build Status](https://travis-ci.org/mooti/validator-php.svg?branch=master)](https://travis-ci.org/mooti/validator-php)
-[![Coverage Status](https://coveralls.io/repos/github/mooti/validator-php/badge.svg?branch=master)](https://coveralls.io/github/mooti/validator-php?branch=master)
-[![Latest Stable Version](https://poser.pugx.org/mooti/validator-php/v/stable)](https://packagist.org/packages/mooti/validator-php)
-[![Total Downloads](https://poser.pugx.org/mooti/validator-php/downloads)](https://packagist.org/packages/mooti/validator-php)
-[![Latest Unstable Version](https://poser.pugx.org/mooti/validator-php/v/unstable)](https://packagist.org/packages/mooti/validator-php)
-[![License](https://poser.pugx.org/mooti/validator-php/license)](https://packagist.org/packages/mooti/validator-php)
+[![Build Status](https://travis-ci.org/mooti/validator.svg?branch=master)](https://travis-ci.org/mooti/validator)
+[![Coverage Status](https://coveralls.io/repos/github/mooti/validator/badge.svg?branch=master)](https://coveralls.io/github/mooti/validator?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/mooti/validator/v/stable)](https://packagist.org/packages/mooti/validator)
+[![Total Downloads](https://poser.pugx.org/mooti/validator/downloads)](https://packagist.org/packages/mooti/validator)
+[![Latest Unstable Version](https://poser.pugx.org/mooti/validator/v/unstable)](https://packagist.org/packages/mooti/validator)
+[![License](https://poser.pugx.org/mooti/validator/license)](https://packagist.org/packages/mooti/validator)
 
 A standalone validator for json style data structures.
 
@@ -14,7 +14,7 @@ A standalone validator for json style data structures.
 You can install this through packagist
 
 ```
-$ composer require mooti/validator-php
+$ composer require mooti/validator
 ```
 
 ### Run the tests
