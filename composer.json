@@ -1,5 +1,8 @@
 {
     "name":"mooti/validator",
+    "description": "PHP validator for json style data structures",
+    "keywords": ["validation", "validator"],
+    "type": "library",
     "license": "Apache-2.0",
     "require": {
         "php": ">=5.5.9",
