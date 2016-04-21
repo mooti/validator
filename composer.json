@@ -16,7 +16,7 @@
         "psr-4": {"Mooti\\Validator\\": "src/"}
     },
     "autoload-dev": {
-        "psr-4": {"Mooti\\Test\\PHPUnit\\Validator\\": "test/"}
+        "psr-4": {"Mooti\\Test\\PHPUnit\\Validator\\": "tests/phpunit"}
     },
     "config": {
         "bin-dir": "bin/vendor/"
