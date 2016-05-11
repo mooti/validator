@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9979667f4984e3ae716d1a77432e456a",
-    "content-hash": "6a595d5eb84df8683395fc107ae59136",
+    "hash": "9dd6a5abc3262e5f7c35ba60e5e26613",
+    "content-hash": "0ac2add32900604651fd78efc1be0dd6",
     "packages": [
         {
             "name": "mooti/factory",
-            "version": "0.0.4",
+            "version": "0.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mooti/factory.git",
-                "reference": "ba8ad02f231944c1854300428ab0afcccf772c40"
+                "reference": "7072a0aee2d6c62bc75c4ef7770730d496d1302a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mooti/factory/zipball/ba8ad02f231944c1854300428ab0afcccf772c40",
-                "reference": "ba8ad02f231944c1854300428ab0afcccf772c40",
+                "url": "https://api.github.com/repos/mooti/factory/zipball/7072a0aee2d6c62bc75c4ef7770730d496d1302a",
+                "reference": "7072a0aee2d6c62bc75c4ef7770730d496d1302a",
                 "shasum": ""
             },
             "require": {
@@ -45,7 +45,7 @@
                 "testable",
                 "testing"
             ],
-            "time": "2016-05-04 14:02:21"
+            "time": "2016-05-11 13:37:51"
         }
     ],
     "packages-dev": [

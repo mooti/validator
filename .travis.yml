@@ -5,6 +5,6 @@ php:
 
 script:
     - composer install
-    - ./bin/vendor/phpunit -c config/phpunit.xml --testsuite=Unit
+    - ./vendor/bin/phpunit -c config/phpunit.xml --testsuite=Unit
 after_script:
-    - ./bin/vendor/coveralls -v
+    - ./vendor/bin/coveralls -v
