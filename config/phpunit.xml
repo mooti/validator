@@ -22,10 +22,10 @@
 
 	<testsuites>
 		<testsuite name="Unit">
-			<directory>../tests/phpunit/Unit</directory>			
+			<directory>../tests/phpunit/src/Unit</directory>			
 		</testsuite>
 		<testsuite name="Functional">
-			<directory>../tests/phpunit/Functional</directory>			
+			<directory>../tests/phpunit/src/Functional</directory>			
 		</testsuite>
 	</testsuites>
 
