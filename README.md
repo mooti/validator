@@ -105,3 +105,20 @@ The libray allows you to validate a json style data structure using a set of val
     }
 ```
 
+#### Rules
+
+The rules follow a simple structure. Each rule has a key that corresponds to the key in your data structure. For numeric arrays, the key is an asterisk `*` and they are called wildcard rules. All rules have a `type` property. Each type has additional properties.
+
+- **string**
+
+   The string type validates the item as a string. it also has the folloing properties:
+   * **required** [*true/false*] : wether the item is required
+   * **constraints** [*array*] : an associative array of constraints. These are:
+      * **length** [*array*] : the minimum and maximum length of the string as a numeric array in the format [min, max]. If you don't want to set a value set it to null. So [1,null] will be a string with a minimum of one character but no maximum set.
+
+- **number**
+
+   The number type validates the item as a string. it also has the folloing properties:
+   * **required** [*true/false*] : wether the item is required
+   * **constraints** [*array*] : an associative array of constraints. These are:
+      * **integer** [*true/false*] : Wether this has to be an integer. true validates it to be an integer, false validates it to be anything but an integer
