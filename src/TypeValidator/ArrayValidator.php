@@ -14,7 +14,7 @@ namespace Mooti\Validator\TypeValidator;
 use Mooti\Factory\Factory;
 use Mooti\Validator\Exception\DataValidationException;
 
-class ArrayValidator implements TypeValidatorInterface
+class ArrayValidator extends AbstractTypeValidator
 {
     use Factory;
     

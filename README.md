@@ -112,7 +112,11 @@ The rules follow a simple structure. Each rule has a key that corresponds to the
 ```
 $rules = [
     'name' => [
-        'type' => 'string'
+        'required' => true,
+        'type' => 'string',
+        'constraints' => [
+            'callback' => 'MyValidator::checkName'
+        ]
     ]
 ];
 ```
@@ -122,18 +126,30 @@ For numeric arrays, the key is an asterisk `*` and they are called wildcard rule
 ```
 $rules = [
     '*' => [
-        'type' => 'string'
+        'required' => true,
+        'type' => 'string',
+        'constraints' => [
+            'callback' => 'MyValidator::checkValue'
+        ]
     ]
 ];
 ```
 
-All rules have a `type` property. Each type has additional properties.
+All rules have mandatory `type` and `required` properties and an optional `constraints` property. 
+
+* **properties**
+   * **required** [*true/false*]: Wether the item is required or not
+   * **type** [*string*]: The type of item. Currently `string`, `number`, `array` or `object`
+   * **constraints** [*array*] : an optional associative array of constraints. These are:
+      * **callback** [*php callback*] : A valid php callback function. This should throw a `Mooti\Validator\Exception\DataValidationException` exception if validation fails
+
+Each type also has additional properties.
 
 - **string**
    ```
     $rules = [
         'name' => [
-            'required'    => true,
+            'required'    => false,
             'type'        => 'string',
             'constraints' => [
                 'length' => [1,null]
@@ -141,16 +157,16 @@ All rules have a `type` property. Each type has additional properties.
         ]
     ]
    ```
-   The string type validates the item as a string. it also has the following properties:
-   * **required** [*true/false*] : wether the item is required
-   * **constraints** [*array*] : an optional associative array of constraints. These are:
+   The string type validates the item as a string. it also has the following properties:   
+   * **constraints** [*array*] : Exta constraints are:
       * **length** [*array*] : the minimum and maximum length of the string as a numeric array in the format [min, max]. If you don't want to set a value set it to null. So [1,null] will be a string with a minimum of one character but no maximum set.
 
 - **number**
 
    ```
    $rules = [
-       'required'    => false,
+        'name' => [
+            'required'    => false,
             'type'        => 'number',
             'constraints' => [
                 'integer' => true
@@ -158,9 +174,8 @@ All rules have a `type` property. Each type has additional properties.
         ]
     ]
    ```
-   The number type validates the item as a number. it also has the following properties:
-   * **required** [*true/false*] : wether the item is required
-   * **constraints** [*array*] : an optional associative array of constraints. These are:
+   The number type validates the item as a number. it also has the following properties:   
+   * **constraints** [*array*] : Exta constraints are:
       * **integer** [*true/false*] : Wether this has to be an integer. true validates it to be an integer, false validates it to be anything but an integer
 
 - **object**
@@ -186,8 +201,7 @@ All rules have a `type` property. Each type has additional properties.
         ]
     ]
    ```
-   The object type validates the item as an associative array/standard object. it also has the following properties:
-   * **required** [*true/false*] : wether the item is required
+   The object type validates the item as an associative array/standard object. it also has the following properties:   
    * **properties** [*array*] : an optional associative array of rules for the object's properties. You can use a wildcard rule here.
 
 - **array**
@@ -208,6 +222,5 @@ All rules have a `type` property. Each type has additional properties.
         ]
     ]
    ```
-   The array type validates the item as an numeric array/standard object. it also has the following properties:
-   * **required** [*true/false*] : wether the item is required
+   The array type validates the item as an numeric array/standard object. it also has the following properties:   
    * **items** [*array*] : an optional associative array of rules for the array's items. This should be a wildcard rule and nothing else.

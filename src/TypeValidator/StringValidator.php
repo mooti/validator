@@ -15,7 +15,7 @@ use Mooti\Factory\Factory;
 use Mooti\Validator\Exception\DataValidationException;
 use Mooti\Validator\Exception\InvalidRuleException;
 
-class StringValidator implements TypeValidatorInterface
+class StringValidator extends AbstractTypeValidator
 {
     use Factory;
     
@@ -38,7 +38,9 @@ class StringValidator implements TypeValidatorInterface
                 throw new InvalidRuleException('The length property needs to have two members');
             }
             $this->validateLength($data, $constraints['length'][0], $constraints['length'][1]);
-        }       
+        }
+
+        parent::validate($constraints, $data);
     }
 
     public function validateLength($data, $min = null, $max = null)

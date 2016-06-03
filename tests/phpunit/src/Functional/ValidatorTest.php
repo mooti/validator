@@ -3,9 +3,17 @@
 namespace Mooti\Test\PHPUnit\Validator\Functional;
 
 use Mooti\Validator\Validator;
+use Mooti\Validator\Exception\DataValidationException;
 
 class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
+    public function callBackTest($data)
+    {
+        if (str_word_count($data) != 2) {
+            throw new DataValidationException('This value must have two words');            
+        }
+    }
+
     /**
      * @test
      * @dataProvider dataToValidate
@@ -17,7 +25,8 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                 'required'    => true,
                 'type'        => 'string',
                 'constraints' => [
-                    'length' => [1,null]
+                    'length' => [1,null],
+                    'callback' => [$this, 'callBackTest']
                 ]
             ],
             'age' => [
@@ -77,6 +86,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             [['name' => null], false, ['name' => ['This value must be a string']]],
             [['name' => 1], false, ['name' => ['This value must be a string']]],
             [['name' => ''], false, ['name' => ['This value must have a length of at least 1']]],
+            [['name' => 'Ken'], false, ['name' => ['This value must have two words']]],
             [['name' => 'Ken Lalobo'], true, []],
             [['name' => 'Ken Lalobo', 'age' => 'test'], false, ['age' => ['This value must be a number']]],
             [['name' => 'Ken Lalobo', 'age' => 0.1], false, ['age' => ['This value must  be an integer']]],

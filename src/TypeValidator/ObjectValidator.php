@@ -14,7 +14,7 @@ namespace Mooti\Validator\TypeValidator;
 use Mooti\Factory\Factory;
 use Mooti\Validator\Exception\DataValidationException;
 
-class ObjectValidator implements TypeValidatorInterface
+class ObjectValidator extends AbstractTypeValidator
 {
     use Factory;
     
@@ -35,6 +35,8 @@ class ObjectValidator implements TypeValidatorInterface
         } else {
             throw new DataValidationException('This value must be a standard object or an associative array');
         }
+
+        parent::validate($constraints, $data);
     }
 
     /**

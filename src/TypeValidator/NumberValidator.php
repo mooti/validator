@@ -14,7 +14,7 @@ namespace Mooti\Validator\TypeValidator;
 use Mooti\Factory\Factory;
 use Mooti\Validator\Exception\DataValidationException;
 
-class NumberValidator implements TypeValidatorInterface
+class NumberValidator extends AbstractTypeValidator
 {
     use Factory;
     
@@ -35,6 +35,8 @@ class NumberValidator implements TypeValidatorInterface
         if (isset($constraints['integer'])) {
             $this->validateInteger($data, $constraints['integer']);
         }
+
+        parent::validate($constraints, $data);
     }
 
     /**
