@@ -107,18 +107,107 @@ The libray allows you to validate a json style data structure using a set of val
 
 #### Rules
 
-The rules follow a simple structure. Each rule has a key that corresponds to the key in your data structure. For numeric arrays, the key is an asterisk `*` and they are called wildcard rules. All rules have a `type` property. Each type has additional properties.
+The rules follow a simple structure. Each rule has a key that corresponds to the key in your data structure.
+
+```
+$rules = [
+    'name' => [
+        'type' => 'string'
+    ]
+];
+```
+
+For numeric arrays, the key is an asterisk `*` and they are called wildcard rules. Wildcard rules will validate against every item in the data structure (excluding children). If you use a wildcard rule, you cannot add additional rules for that level of validation.
+
+```
+$rules = [
+    '*' => [
+        'type' => 'string'
+    ]
+];
+```
+
+All rules have a `type` property. Each type has additional properties.
 
 - **string**
-
-   The string type validates the item as a string. it also has the folloing properties:
+   ```
+    $rules = [
+        'name' => [
+            'required'    => true,
+            'type'        => 'string',
+            'constraints' => [
+                'length' => [1,null]
+            ]
+        ]
+    ]
+   ```
+   The string type validates the item as a string. it also has the following properties:
    * **required** [*true/false*] : wether the item is required
-   * **constraints** [*array*] : an associative array of constraints. These are:
+   * **constraints** [*array*] : an optional associative array of constraints. These are:
       * **length** [*array*] : the minimum and maximum length of the string as a numeric array in the format [min, max]. If you don't want to set a value set it to null. So [1,null] will be a string with a minimum of one character but no maximum set.
 
 - **number**
 
-   The number type validates the item as a string. it also has the folloing properties:
+   ```
+   $rules = [
+       'required'    => false,
+            'type'        => 'number',
+            'constraints' => [
+                'integer' => true
+            ]
+        ]
+    ]
+   ```
+   The number type validates the item as a number. it also has the following properties:
    * **required** [*true/false*] : wether the item is required
-   * **constraints** [*array*] : an associative array of constraints. These are:
+   * **constraints** [*array*] : an optional associative array of constraints. These are:
       * **integer** [*true/false*] : Wether this has to be an integer. true validates it to be an integer, false validates it to be anything but an integer
+
+- **object**
+
+   ```
+   $rules = [
+       'address' => [
+            'required'   => false,
+            'type'       => 'object',
+            'properties' => [
+                'line1' => [
+                    'required' => true,
+                    'type'     => 'string',
+                    'constraints' => [
+                        'length' => [1,null]
+                    ]
+                ],
+                'line2' => [
+                    'required' => false,
+                    'type'     => 'string'
+                ]
+            ]
+        ]
+    ]
+   ```
+   The object type validates the item as an associative array/standard object. it also has the following properties:
+   * **required** [*true/false*] : wether the item is required
+   * **properties** [*array*] : an optional associative array of rules for the object's properties. You can use a wildcard rule here.
+
+- **array**
+
+   ```
+   $rules = [
+       'nickNames' => [
+            'required' => false,
+            'type'     => 'array',
+            'items'    => [
+                '*' => [
+                    'type' => 'string',
+                    'constraints' => [
+                        'length' => [1,null]
+                    ]
+                ]
+            ]
+        ]
+    ]
+   ```
+   The array type validates the item as an numeric array/standard object. it also has the following properties:
+   * **required** [*true/false*] : wether the item is required
+   * **items** [*array*] : an optional associative array of rules for the array's items. This should be a wildcard rule and nothing else.
