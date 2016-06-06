@@ -107,7 +107,7 @@ The libray allows you to validate a json style data structure using a set of val
 
 #### Rules
 
-The rules follow a simple structure. Each rule has a key that corresponds to the key in your data structure.
+The rules follow a simple structure. There are two categories of rules. Named, and wildcard. Each named rule has a key that corresponds to a key in your data structure.
 
 ```
 $rules = [
@@ -121,12 +121,11 @@ $rules = [
 ];
 ```
 
-For numeric arrays, the key is an asterisk `*` and they are called wildcard rules. Wildcard rules will validate against every item in the data structure (excluding children). If you use a wildcard rule, you cannot add additional rules for that level of validation.
+For wildcard rules, the key is an asterisk `*`. Wildcard rules will validate against every item in the data structure (excluding children). If you use a wildcard rule, you cannot add additional rules for that level of validation.
 
 ```
 $rules = [
     '*' => [
-        'required' => true,
         'type' => 'string',
         'constraints' => [
             'callback' => 'MyValidator::checkValue'
@@ -135,10 +134,10 @@ $rules = [
 ];
 ```
 
-All rules have mandatory `type` and `required` properties and an optional `constraints` property. 
+All rules have a mandatory `type` and an optional `constraints` property. Additionaly, all named rules have a mandatory `required` property.
 
 * **properties**
-   * **required** [*true/false*]: Wether the item is required or not
+   * **required** [*true/false*]: Wether the item is required or not (For named rules only)
    * **type** [*string*]: The type of item. Currently `string`, `number`, `array` or `object`
    * **constraints** [*array*] : an optional associative array of constraints. These are:
       * **callback** [*php callback*] : A valid php callback function. This should throw a `Mooti\Validator\Exception\DataValidationException` exception if validation fails
