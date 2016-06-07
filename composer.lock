@@ -4,12 +4,12 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d480ef93b6b6fcb4fad57deb123ffbad",
-    "content-hash": "10a36f9aae390c44b70de177cb04024b",
+    "hash": "4d8ed97eccfc940897ad240e6247fc49",
+    "content-hash": "cd4a2be4d1bd5b5fdfc2becc649be626",
     "packages": [
         {
             "name": "mooti/factory",
-            "version": "0.0.6",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mooti/factory.git",

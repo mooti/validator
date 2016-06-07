@@ -6,7 +6,7 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=5.5.9",
-        "mooti/factory": "^0.0.6"
+        "mooti/factory": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "5.1.*",
