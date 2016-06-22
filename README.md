@@ -98,7 +98,7 @@ The libray allows you to validate a json style data structure using a set of val
         'nickNames' => ['Len Kalobo', 'Kenny McKenface']
     ];
 
-    $validator = new Mooti/Validator;
+    $validator = new Mooti\Validator\Validator;
 
     if ($validator->isValid($rules, $data) == false) {
         print_r($validator->getErrors());
