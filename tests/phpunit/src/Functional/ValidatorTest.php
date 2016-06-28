@@ -75,6 +75,20 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                         ]
                     ]
                 ]
+            ],
+            'languages' => [
+                'name'     => 'Languages',
+                'required' => false,
+                'type'     => 'array',
+                'items'    => [
+                    '*' => [
+                        'name' => 'Language',
+                        'type' => 'string',
+                        'constraints' => [
+                            'length' => [1,null]
+                        ]
+                    ]
+                ]
             ]
         ];
 
@@ -189,7 +203,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                 ],
                 false,
                 [
-                    'nickNames.*' => ['Item[1] : This value must be a string']
+                    'nickNames.*' => ['Value number 1 must be a string']
                 ]
             ],
             [
@@ -205,7 +219,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                 ],
                 false,
                 [
-                    'nickNames.*' => ['Item[2] : This value must be a string']
+                    'nickNames.*' => ['Value number 2 must be a string']
                 ]
             ],
             [
@@ -217,11 +231,46 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                         'line2'    => 'test 2',
                         'postCode' => 'BR12 2NN',
                     ],
-                    'nickNames' => ['Len Kalobo', 'Lobs']
+                    'nickNames' => ['Len Kalobo', 'Lobs'],
+                    'languages' => [1]
+                ],
+                false,
+                [
+                    'languages.*' => ['Language number 1 must be a string']
+                ]
+            ],
+            [
+                [
+                    'name' => 'Ken Lalobo',
+                    'age' => 102,
+                    'address' => [
+                        'line1'    => 'test 1',
+                        'line2'    => 'test 2',
+                        'postCode' => 'BR12 2NN',
+                    ],
+                    'nickNames' => ['Len Kalobo', 'Lobs'],
+                    'languages' => ['PHP', 1]
+                ],
+                false,
+                [
+                    'languages.*' => ['Language number 2 must be a string']
+                ]
+            ],
+            [
+                [
+                    'name' => 'Ken Lalobo',
+                    'age' => 102,
+                    'address' => [
+                        'line1'    => 'test 1',
+                        'line2'    => 'test 2',
+                        'postCode' => 'BR12 2NN',
+                    ],
+                    'nickNames' => ['Len Kalobo', 'Lobs'],
+                    'languages' => ['PHP', 'Javascript']
                 ],
                 true,
                 []
-            ],
+            ]
 
         ];
     }

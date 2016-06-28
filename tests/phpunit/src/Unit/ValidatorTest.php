@@ -480,36 +480,6 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Validator\Exception\DataValidationException
-     * @expectedExceptionMessage Item[1] : something bad
-     */
-    public function validateMultipleItemsThrowsDataValidationException()
-    {
-        $validationRule = [
-            'type' => 'string'
-        ];
-        $fullyQualifiedName = 'hello';
-        $items = [1, 'hello']; 
-
-        $validator = $this->getMockBuilder(Validator::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['validateItem'])
-            ->getMock();
-
-        $validator->expects(self::once())
-            ->method('validateItem')
-            ->with(
-                self::equalTo($validationRule),
-                self::equalTo(1),
-                self::equalTo($fullyQualifiedName)
-            )
-            ->will(self::throwException(new DataValidationException('something bad')));
-
-        $validator->validateMultipleItems($validationRule, $items, $fullyQualifiedName);
-    }
-
-    /**
-     * @test
      */
     public function validateMultipleItemsSucceeds()
     {
@@ -519,6 +489,14 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $fullyQualifiedName = 'hello';
         $items = ['foo', 'bar']; 
 
+        $rule1 = [
+            'type' => 'string',
+            'name' => 'Value number 1'
+        ];
+        $rule2 = [
+            'type' => 'string',
+            'name' => 'Value number 2'
+        ];
         $validator = $this->getMockBuilder(Validator::class)
             ->disableOriginalConstructor()
             ->setMethods(['validateItem'])
@@ -527,8 +505,8 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $validator->expects(self::exactly(2))
             ->method('validateItem')
             ->withConsecutive(
-                [ self::equalTo($validationRule), self::equalTo('foo'), self::equalTo($fullyQualifiedName)],
-                [ self::equalTo($validationRule), self::equalTo('bar'), self::equalTo($fullyQualifiedName)]
+                [ self::equalTo($rule1), self::equalTo('foo'), self::equalTo($fullyQualifiedName)],
+                [ self::equalTo($rule2), self::equalTo('bar'), self::equalTo($fullyQualifiedName)]
             );
 
         $validator->validateMultipleItems($validationRule, $items, $fullyQualifiedName);

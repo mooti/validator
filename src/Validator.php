@@ -181,14 +181,12 @@ class Validator
      */
     public function validateMultipleItems(array $validationRule, array $items, $fullyQualifiedName)
     {
-        try {
-            $itemNumber = 1;
-            foreach ($items as $item) {
-                $this->validateItem($validationRule, $item, $fullyQualifiedName);
-                $itemNumber++;
-            }
-        } catch (DataValidationException $e) {
-            throw new DataValidationException('Item['.$itemNumber.'] : '.$e->getMessage());
+        $itemNumber = 1;
+        foreach ($items as $item) {
+            $tempRule = $validationRule;
+            $tempRule['name'] = empty($validationRule['name'])?'Value number '.$itemNumber:$validationRule['name'].' number '.$itemNumber;
+            $this->validateItem($tempRule, $item, $fullyQualifiedName);
+            $itemNumber++;
         }
     }
 
