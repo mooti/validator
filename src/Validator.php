@@ -134,7 +134,8 @@ class Validator
             }
 
             if ($validationRule['required'] == true && $this->propertyExists($itemKey, $data) == false) {
-                throw new DataValidationException('This value is required');
+                $prettyName = isset($validationRule['name'])?$validationRule['name']:'This value';
+                throw new DataValidationException(sprintf('%s is required', $prettyName));
             } elseif ($validationRule['required'] == false && $this->propertyExists($itemKey, $data) == false) {
                 //The item does not exist and is not required so no need to validate
                 return;
@@ -157,8 +158,9 @@ class Validator
     {
         $typeValidator = $this->getTypeValidator($validationRule['type']);
 
-        $constraints = isset($validationRule['constraints']) ? $validationRule['constraints'] : []; 
-        $typeValidator->validate($constraints, $item);
+        $constraints = isset($validationRule['constraints']) ? $validationRule['constraints'] : [];
+        $prettyName = isset($validationRule['name'])?$validationRule['name']:'This value';
+        $typeValidator->validate($constraints, $item, $prettyName);
 
         $validationType = $validationRule['type'];
 

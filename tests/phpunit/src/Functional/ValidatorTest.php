@@ -22,6 +22,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $validationRules = [
             'name' => [
+                'name'        => 'Name',
                 'required'    => true,
                 'type'        => 'string',
                 'constraints' => [
@@ -30,6 +31,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             'age' => [
+                'name'        => 'Age',
                 'required'    => false,
                 'type'        => 'number',
                 'constraints' => [
@@ -37,6 +39,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             'address' => [
+                'name'       => 'Address',
                 'required'   => false,
                 'type'       => 'object',
                 'properties' => [
@@ -61,6 +64,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             'nickNames' => [
+                'name'     => 'Nick Names',
                 'required' => false,
                 'type'     => 'array',
                 'items'    => [
@@ -82,19 +86,19 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     public function dataToValidate()
     {
         return [
-            [[], false, ['name' => ['This value is required']]],
-            [['name' => null], false, ['name' => ['This value must be a string']]],
-            [['name' => 1], false, ['name' => ['This value must be a string']]],
-            [['name' => ''], false, ['name' => ['This value must have a length of at least 1']]],
+            [[], false, ['name' => ['Name is required']]],
+            [['name' => null], false, ['name' => ['Name must be a string']]],
+            [['name' => 1], false, ['name' => ['Name must be a string']]],
+            [['name' => ''], false, ['name' => ['Name must have a length of at least 1']]],
             [['name' => 'Ken'], false, ['name' => ['This value must have two words']]],
             [['name' => 'Ken Lalobo'], true, []],
-            [['name' => 'Ken Lalobo', 'age' => 'test'], false, ['age' => ['This value must be a number']]],
-            [['name' => 'Ken Lalobo', 'age' => 0.1], false, ['age' => ['This value must  be an integer']]],
+            [['name' => 'Ken Lalobo', 'age' => 'test'], false, ['age' => ['Age must be a number']]],
+            [['name' => 'Ken Lalobo', 'age' => 0.1], false, ['age' => ['Age must  be an integer']]],
             [['name' => 'Ken Lalobo', 'age' => 102], true, []],
             [
                 ['name' => 'Ken Lalobo', 'age' => 102, 'address' => null],
                 false,
-                ['address' => ['This value must be a standard object or an associative array']]
+                ['address' => ['Address must be a standard object or an associative array']]
             ],
             [
                 ['name' => 'Ken Lalobo', 'age' => 102, 'address' => []],

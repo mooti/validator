@@ -23,33 +23,35 @@ class ObjectValidator extends AbstractTypeValidator
      *
      * @param array $constraints The rules
      * @param mixed $data        The data to validate
+     * @param mixed $prettyName  Human readable name for the data being validated
      *
      * @return boolean Wether it was valid or not
      */
-    public function validate(array $constraints, $data)
+    public function validate(array $constraints, $data, $prettyName = 'This value')
     {
         if (gettype($data) == 'object') {
             $this->validateObject($data);
         } elseif (gettype($data) == 'array') {
-            $this->validateAssociativeArray($data);
+            $this->validateAssociativeArray($data, $prettyName);
         } else {
-            throw new DataValidationException('This value must be a standard object or an associative array');
+            throw new DataValidationException(sprintf('%s must be a standard object or an associative array', $prettyName));
         }
 
-        parent::validate($constraints, $data);
+        parent::validate($constraints, $data, $prettyName);
     }
 
     /**
      * Validate that the data is an instance of the stdClass
      *
      * @param object $data The data to validate
+     * @param mixed $prettyName  Human readable name for the data being validated
      *
      * @throws DataValidationException
      */
-    public function validateObject($data)
+    public function validateObject($data, $prettyName = 'This value')
     {
         if (!$data instanceof \stdClass) {
-            throw new DataValidationException('This value must be an instance of the stdClass');
+            throw new DataValidationException(sprintf('%s must be an instance of the stdClass', $prettyName));
         }
     }
 
@@ -57,14 +59,15 @@ class ObjectValidator extends AbstractTypeValidator
      * Validate that the data is an associative array
      *
      * @param array $data The data to validate
+     * @param mixed $prettyName  Human readable name for the data being validated
      *
      * @throws DataValidationException
      */
-    public function validateAssociativeArray(array $data)
+    public function validateAssociativeArray(array $data, $prettyName = 'This value')
     {
         //if the array has keys that are both numeric AND sequential then it is not associative
         if (!empty($data) && array_keys($data) === range(0, count($data) - 1)) {
-            throw new DataValidationException('This value is an array but it is not associative');
+            throw new DataValidationException(sprintf('%s is an array but it is not associative', $prettyName));
         }
     }
 }

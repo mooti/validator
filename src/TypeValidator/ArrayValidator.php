@@ -23,15 +23,16 @@ class ArrayValidator extends AbstractTypeValidator
      *
      * @param array $constraints The rules
      * @param mixed $data        The data to validate
+     * @param mixed $prettyName  Human readable name for the data being validated
      *
      * @throws DataValidationException
      */
-    public function validate(array $constraints, $data)
+    public function validate(array $constraints, $data, $prettyName = 'This value')
     {
         if (gettype($data) == 'array') {
-            $this->validateSequentialArray($data);
+            $this->validateSequentialArray($data, $prettyName);
         } else {
-            throw new DataValidationException('This value must be a sequential array');
+            throw new DataValidationException(sprintf('%s must be a sequential array', $prettyName));
         }
     }
 
@@ -39,14 +40,15 @@ class ArrayValidator extends AbstractTypeValidator
      * Validate that array is sequential
      *
      * @param array $data The data to validate
+     * @param mixed $prettyName  Human readable name for the data being validated
      *
      * @throws DataValidationException
      */
-    public function validateSequentialArray(array $data)
+    public function validateSequentialArray(array $data, $prettyName = 'This value')
     {
         //if the array has to have keys that are both numeric AND sequential
         if (!empty($data) && array_keys($data) !== range(0, count($data) - 1)) {
-            throw new DataValidationException('This value is an array but it is not sequential');
+            throw new DataValidationException(sprintf('%s is an array but it is not sequential', $prettyName));
         }
     }
 }
