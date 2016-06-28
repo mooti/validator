@@ -23,13 +23,14 @@ class AbstractTypeValidator implements TypeValidatorInterface
      *
      * @param array $constraints The rules
      * @param mixed $data        The data to validate
+     * @param mixed $prettyName  Human readable name for the data being validated
      *
      * @throws DataValidationException
      */
-    public function validate(array $constraints, $data)
+    public function validate(array $constraints, $data, $prettyName = 'This value')
     {        
         if (isset($constraints['callback'])) {     
-            call_user_func_array($constraints['callback'], array($data));
+            call_user_func_array($constraints['callback'], array($data, $prettyName));
         }
     }
 }

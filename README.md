@@ -35,6 +35,7 @@ The libray allows you to validate a json style data structure using a set of val
 
     $rules = [
         'name' => [
+            'name'        => 'Name',
             'required'    => true,
             'type'        => 'string',
             'constraints' => [
@@ -42,6 +43,7 @@ The libray allows you to validate a json style data structure using a set of val
             ]
         ],
         'age' => [
+            'name'        => 'Age',
             'required'    => false,
             'type'        => 'number',
             'constraints' => [
@@ -49,6 +51,7 @@ The libray allows you to validate a json style data structure using a set of val
             ]
         ],
         'address' => [
+            'name'       => 'Address',
             'required'   => false,
             'type'       => 'object',
             'properties' => [
@@ -112,8 +115,9 @@ The rules follow a simple structure. There are two categories of rules. Named, a
 ```
 $rules = [
     'name' => [
-        'required' => true,
-        'type' => 'string',
+        'name'        => 'Name',
+        'required'    => true,
+        'type'        => 'string',
         'constraints' => [
             'callback' => 'MyValidator::checkName'
         ]
@@ -137,6 +141,7 @@ $rules = [
 All rules have a mandatory `type` and an optional `constraints` property. Additionaly, all named rules have a mandatory `required` property.
 
 * **properties**
+   * **name** [*string*]: The human readable name of your item (this is optional)
    * **required** [*true/false*]: Wether the item is required or not (For named rules only)
    * **type** [*string*]: The type of item. Currently `string`, `number`, `array` or `object`
    * **constraints** [*array*] : an optional associative array of constraints. These are:
