@@ -117,6 +117,7 @@ $rules = [
     'name' => [
         'name'        => 'Name',
         'required'    => true,
+        'nullable'    => true,
         'type'        => 'string',
         'constraints' => [
             'callback' => 'MyValidator::checkName'
@@ -143,6 +144,7 @@ All rules have a mandatory `type` and an optional `constraints` property. Additi
 * **properties**
    * **name** [*string*]: The human readable name of your item (this is optional)
    * **required** [*true/false*]: Wether the item is required or not (For named rules only)
+   * **nullable** [*true/false*]: Wether the item can be defined but be null (For named rules only)
    * **type** [*string*]: The type of item. Currently `string`, `number`, `array` or `object`
    * **constraints** [*array*] : an optional associative array of constraints. These are:
       * **callback** [*php callback*] : A valid php callback function. This should throw a `Mooti\Validator\Exception\DataValidationException` exception if validation fails
