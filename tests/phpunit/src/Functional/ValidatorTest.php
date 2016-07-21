@@ -21,6 +21,15 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     public function validate($data, $valid, $errors)
     {
         $validationRules = [
+            'title' => [
+                'name'        => 'Title',
+                'required'    => true,
+                'nullable'    => true,
+                'type'        => 'string',
+                'constraints' => [
+                    'length' => [1,null]
+                ]
+            ],
             'name' => [
                 'name'        => 'Name',
                 'required'    => true,
@@ -89,6 +98,15 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                         ]
                     ]
                 ]
+            ],
+            'favouriteQuote' => [
+                'name'     => 'Favourite Quote',
+                'required' => false,
+                'nullable' => true,
+                'type'     => 'string',
+                'constraints' => [
+                    'length' => [1,null]
+                ]
             ]
         ];
 
@@ -99,23 +117,26 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function dataToValidate()
     {
-        return [
-            [[], false, ['name' => ['Name is required']]],
-            [['name' => null], false, ['name' => ['Name must be a string']]],
-            [['name' => 1], false, ['name' => ['Name must be a string']]],
-            [['name' => ''], false, ['name' => ['Name must have a length of at least 1']]],
-            [['name' => 'Ken'], false, ['name' => ['This value must have two words']]],
-            [['name' => 'Ken Lalobo'], true, []],
-            [['name' => 'Ken Lalobo', 'age' => 'test'], false, ['age' => ['Age must be a number']]],
-            [['name' => 'Ken Lalobo', 'age' => 0.1], false, ['age' => ['Age must  be an integer']]],
-            [['name' => 'Ken Lalobo', 'age' => 102], true, []],
+        return [            
+            [[], false, ['name' => ['Name is required'], 'title' => ['Title is required']]],
+            [['title' => 1], false, ['name' => ['Name is required'], 'title' => ['Title must be a string']]],
+            [['title' => null], false, ['name' => ['Name is required']]],
+            [['title' => 'Mr'], false, ['name' => ['Name is required']]],
+            [['title' => 'Mr', 'name' => null], false, ['name' => ['Name must be a string']]],
+            [['title' => 'Mr', 'name' => 1], false, ['name' => ['Name must be a string']]],
+            [['title' => 'Mr', 'name' => ''], false, ['name' => ['Name must have a length of at least 1']]],
+            [['title' => 'Mr', 'name' => 'Ken'], false, ['name' => ['This value must have two words']]],
+            [['title' => 'Mr', 'name' => 'Ken Lalobo'], true, []],
+            [['title' => 'Mr', 'name' => 'Ken Lalobo', 'age' => 'test'], false, ['age' => ['Age must be a number']]],
+            [['title' => 'Mr', 'name' => 'Ken Lalobo', 'age' => 0.1], false, ['age' => ['Age must  be an integer']]],
+            [['title' => 'Mr', 'name' => 'Ken Lalobo', 'age' => 102], true, []],
             [
-                ['name' => 'Ken Lalobo', 'age' => 102, 'address' => null],
+                ['title' => 'Mr', 'name' => 'Ken Lalobo', 'age' => 102, 'address' => null],
                 false,
                 ['address' => ['Address must be a standard object or an associative array']]
             ],
             [
-                ['name' => 'Ken Lalobo', 'age' => 102, 'address' => []],
+                ['title' => 'Mr', 'name' => 'Ken Lalobo', 'age' => 102, 'address' => []],
                 false,
                 [
                     'address.line1'   => ['This value is required'],
@@ -124,6 +145,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
+                    'title' => 'Mr',
                     'name' => 'Ken Lalobo',
                     'age' => 102,
                     'address' => [
@@ -138,6 +160,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
+                    'title' => 'Mr',
                     'name' => 'Ken Lalobo',
                     'age' => 102,
                     'address' => [
@@ -150,6 +173,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
+                    'title' => 'Mr',
                     'name' => 'Ken Lalobo',
                     'age' => 102,
                     'address' => [
@@ -165,6 +189,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
+                    'title' => 'Mr',
                     'name' => 'Ken Lalobo',
                     'age' => 102,
                     'address' => [
@@ -178,6 +203,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
+                    'title' => 'Mr',
                     'name' => 'Ken Lalobo',
                     'age' => 102,
                     'address' => [
@@ -192,6 +218,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
+                    'title' => 'Mr',
                     'name' => 'Ken Lalobo',
                     'age' => 102,
                     'address' => [
@@ -208,6 +235,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
+                    'title' => 'Mr',
                     'name' => 'Ken Lalobo',
                     'age' => 102,
                     'address' => [
@@ -224,6 +252,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
+                    'title' => 'Mr',
                     'name' => 'Ken Lalobo',
                     'age' => 102,
                     'address' => [
@@ -241,6 +270,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
+                    'title' => 'Mr',
                     'name' => 'Ken Lalobo',
                     'age' => 102,
                     'address' => [
@@ -258,6 +288,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
+                    'title' => 'Mr',
                     'name' => 'Ken Lalobo',
                     'age' => 102,
                     'address' => [
@@ -266,7 +297,67 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                         'postCode' => 'BR12 2NN',
                     ],
                     'nickNames' => ['Len Kalobo', 'Lobs'],
-                    'languages' => ['PHP', 'Javascript']
+                    'languages' => ['PHP', 'Javascript'],
+                    'favouriteQuote' => 1
+                ],
+                false,
+                [
+                    'favouriteQuote' => [
+                        'Favourite Quote must be a string'
+                    ]
+                ]
+            ],
+            [
+                [
+                    'title' => 'Mr',
+                    'name' => 'Ken Lalobo',
+                    'age' => 102,
+                    'address' => [
+                        'line1'    => 'test 1',
+                        'line2'    => 'test 2',
+                        'postCode' => 'BR12 2NN',
+                    ],
+                    'nickNames' => ['Len Kalobo', 'Lobs'],
+                    'languages' => ['PHP', 'Javascript'],
+                    'favouriteQuote' => ''
+                ],
+                false,
+                [
+                    'favouriteQuote' => [
+                        'Favourite Quote must have a length of at least 1'
+                    ]
+                ]
+            ],
+            [
+                [
+                    'title' => 'Mr',
+                    'name' => 'Ken Lalobo',
+                    'age' => 102,
+                    'address' => [
+                        'line1'    => 'test 1',
+                        'line2'    => 'test 2',
+                        'postCode' => 'BR12 2NN',
+                    ],
+                    'nickNames' => ['Len Kalobo', 'Lobs'],
+                    'languages' => ['PHP', 'Javascript'],
+                    'favouriteQuote' => null
+                ],
+                true,
+                []
+            ],
+            [
+                [
+                    'title' => 'Mr',
+                    'name' => 'Ken Lalobo',
+                    'age' => 102,
+                    'address' => [
+                        'line1'    => 'test 1',
+                        'line2'    => 'test 2',
+                        'postCode' => 'BR12 2NN',
+                    ],
+                    'nickNames' => ['Len Kalobo', 'Lobs'],
+                    'languages' => ['PHP', 'Javascript'],
+                    'favouriteQuote' => 'Seize the day... Tomorrow'
                 ],
                 true,
                 []

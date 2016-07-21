@@ -28,7 +28,7 @@ class AbstractTypeValidator implements TypeValidatorInterface
      * @throws DataValidationException
      */
     public function validate(array $constraints, $data, $prettyName = 'This value')
-    {        
+    {
         if (isset($constraints['callback'])) {     
             call_user_func_array($constraints['callback'], array($data, $prettyName));
         }

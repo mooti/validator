@@ -142,6 +142,12 @@ class Validator
             }
 
             $item = $this->getProperty($itemKey, $data);
+
+            $nullable = isset($validationRule['nullable']) ? (bool) $validationRule['nullable'] : false;
+            if ($nullable == true && is_null($item)) {
+                return;
+            }
+
             $this->validateItem($validationRule, $item, $fullyQualifiedName);
         }
     }
