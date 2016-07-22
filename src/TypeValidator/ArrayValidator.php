@@ -34,6 +34,8 @@ class ArrayValidator extends AbstractTypeValidator
         } else {
             throw new DataValidationException(sprintf('%s must be a sequential array', $prettyName));
         }
+
+        parent::validate($constraints, $data, $prettyName);
     }
 
     /**
