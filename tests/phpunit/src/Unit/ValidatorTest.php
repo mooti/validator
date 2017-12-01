@@ -51,7 +51,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Validator\Exception\InvalidRuleException
+     * @expectedException \Mooti\Validator\Exception\InvalidRuleException
      * @expectedExceptionMessage All rules must have a "type" property
      */
     public function validateEmptyNamedRuleThrowsValidationRuleException()
@@ -67,7 +67,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Validator\Exception\InvalidRuleException
+     * @expectedException \Mooti\Validator\Exception\InvalidRuleException
      * @expectedExceptionMessage You cannot have more than one rule if using a wildcard
      */
     public function validateMultipleRulesWithWildCardThrowsValidationRuleException()
@@ -201,8 +201,8 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Validator\Exception\InvalidRuleException
-     * @expectedExceptionMessage A named rule must have a "required" property
+     * @expectedException \Mooti\Validator\Exception\InvalidRuleException
+     * @expectedExceptionMessage hello does not have a "required". All named rules must have a "required" property
      */
     public function validateDataThrowsInvalidRuleException()
     {
@@ -218,7 +218,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Validator\Exception\DataValidationException
+     * @expectedException \Mooti\Validator\Exception\DataValidationException
      * @expectedExceptionMessage This value is required
      */
     public function validateDataThrowsDataValidationException()
@@ -586,7 +586,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Validator\Exception\InvalidTypeValidatorException
+     * @expectedException \Mooti\Validator\Exception\InvalidTypeValidatorException
      * @expectedExceptionMessage The type "foo" is invalid
      */
     public function getTypeValidatorThrowsInvalidTypeValidatorException()

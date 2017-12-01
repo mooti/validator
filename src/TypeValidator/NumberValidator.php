@@ -30,7 +30,8 @@ class NumberValidator extends AbstractTypeValidator
     public function validate(array $constraints, $data, $prettyName = 'This value')
     {
         if (is_numeric($data) == false) {
-            throw new DataValidationException(sprintf('%s must be a number', $prettyName));
+            $message = $constraints['message'] ?? '%s must be a number';
+            throw new DataValidationException(sprintf($message, $prettyName));
         }
 
         if (isset($constraints['integer'])) {

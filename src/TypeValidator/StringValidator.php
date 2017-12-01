@@ -18,7 +18,7 @@ use Mooti\Validator\Exception\InvalidRuleException;
 class StringValidator extends AbstractTypeValidator
 {
     use Factory;
-    
+
     /**
      * Validate some data
      *
@@ -27,18 +27,28 @@ class StringValidator extends AbstractTypeValidator
      * @param mixed $prettyName  Human readable name for the data being validated
      *
      * @return boolean Wether it was valid or not
+     * @throws InvalidRuleException
+     * @throws DataValidationException
      */
     public function validate(array $constraints, $data, $prettyName = 'This value')
     {
         if (gettype($data) != 'string') {
-            throw new DataValidationException(sprintf('%s must be a string', $prettyName));
+            $message = $constraints['message'] ?? '%s must be a string';
+            throw new DataValidationException(sprintf($message, $prettyName));
         }
 
         if (isset($constraints['length'])) {
             if (sizeof($constraints['length']) != 2) {
-                throw new InvalidRuleException('The length property needs to have two members');
+                throw new InvalidRuleException(sprintf('The length property of %s needs to have two members', $prettyName));
             }
             $this->validateLength($data, $constraints['length'][0], $constraints['length'][1], $prettyName);
+        }
+
+        if (isset($constraints['enum'])) {
+            if (sizeof($constraints['enum']) == 0) {
+                throw new InvalidRuleException(sprintf('The enum property of %s needs to have at least one member', $prettyName));
+            }
+            $this->validateEnum($data, $constraints['enum'], $prettyName);
         }
 
         parent::validate($constraints, $data, $prettyName);
@@ -49,11 +59,27 @@ class StringValidator extends AbstractTypeValidator
         $length = strlen($data);
 
         if (isset($min) && $length < $min) {
-            throw new DataValidationException(sprintf('%s must have a length of at least '.$min, $prettyName));
+            throw new DataValidationException(sprintf('%s must have a length of at least %d', $prettyName, $min));
         }
 
         if (isset($max) && $length > $max) {
-            throw new DataValidationException(sprintf('%s must have a length less than or equal to '.$max, $prettyName));
+            throw new DataValidationException(sprintf('%s must have a length less than or equal to %d', $prettyName, $max));
+        }
+
+        return true;
+    }
+
+    public function validateEnum($data, array $enum, $prettyName = 'This value')
+    {
+        if (in_array($data, $enum, true) == false) {
+            throw new DataValidationException(
+                sprintf(
+                    '%s is not an allowed value for %s. Allowed values are: %s',
+                    $data,
+                    $prettyName,
+                    implode(', ', $enum)
+                )
+            );
         }
 
         return true;

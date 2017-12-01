@@ -32,7 +32,8 @@ class ArrayValidator extends AbstractTypeValidator
         if (gettype($data) == 'array') {
             $this->validateSequentialArray($data, $prettyName);
         } else {
-            throw new DataValidationException(sprintf('%s must be a sequential array', $prettyName));
+            $message = $constraints['message'] ?? '%s must be a sequential array';
+            throw new DataValidationException(sprintf($message, $prettyName));
         }
 
         parent::validate($constraints, $data, $prettyName);
