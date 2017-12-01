@@ -34,7 +34,8 @@ class ObjectValidator extends AbstractTypeValidator
         } elseif (gettype($data) == 'array') {
             $this->validateAssociativeArray($data, $prettyName);
         } else {
-            throw new DataValidationException(sprintf('%s must be a standard object or an associative array', $prettyName));
+            $message = $constraints['message'] ?? '%s must be a standard object or an associative array';
+            throw new DataValidationException(sprintf($message, $prettyName));
         }
 
         parent::validate($constraints, $data, $prettyName);

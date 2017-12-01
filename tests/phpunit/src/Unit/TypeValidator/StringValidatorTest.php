@@ -32,25 +32,30 @@ class StringValidatorTest extends \PHPUnit_Framework_TestCase
 
         $data = 'test';
 
-        $typeValidator = $this->getMockBuilder(StringValidator::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['validateLength'])
-            ->getMock();
-
-        $typeValidator->expects(self::once())
-            ->method('validateLength')
-            ->with(
-                self::equalTo($data),
-                self::equalTo(1),
-                self::equalTo(20)
-            );
+        $typeValidator = new StringValidator;
 
         $typeValidator->validate($constraints, $data);
     }
 
     /**
      * @test
-     * @expectedException Mooti\Validator\Exception\DataValidationException
+     */
+    public function validateWithEnumSucceeds()
+    {
+        $constraints = [
+            'enum' => ['foo','bar']
+        ];
+
+        $data = 'foo';
+
+        $typeValidator = new StringValidator;
+
+        $typeValidator->validate($constraints, $data);
+    }
+
+    /**
+     * @test
+     * @expectedException \Mooti\Validator\Exception\DataValidationException
      * @expectedExceptionMessage This value must be a string
      */
     public function validateThrowsDataValidationException()
@@ -66,10 +71,10 @@ class StringValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Validator\Exception\InvalidRuleException
-     * @expectedExceptionMessage The length property needs to have two members
+     * @expectedException \Mooti\Validator\Exception\InvalidRuleException
+     * @expectedExceptionMessage The length property of This value needs to have two members
      */
-    public function validateToFewMembersThrowsInvalidRuleException()
+    public function validateLengthTooFewMembersThrowsInvalidRuleException()
     {
         $constraints = [
             'length' => [1]
@@ -84,10 +89,10 @@ class StringValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Validator\Exception\InvalidRuleException
-     * @expectedExceptionMessage The length property needs to have two members
+     * @expectedException \Mooti\Validator\Exception\InvalidRuleException
+     * @expectedExceptionMessage The length property of This value needs to have two members
      */
-    public function validateToManyMembersThrowsInvalidRuleException()
+    public function validateLengthTooManyMembersThrowsInvalidRuleException()
     {
         $constraints = [
             'length' => [1,2,3]
@@ -102,7 +107,7 @@ class StringValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Validator\Exception\DataValidationException
+     * @expectedException \Mooti\Validator\Exception\DataValidationException
      * @expectedExceptionMessage This value must have a length less than or equal to 3
      */
     public function validateLengthTooLargeThrowsDataValidationException()
@@ -119,7 +124,7 @@ class StringValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Validator\Exception\DataValidationException
+     * @expectedException \Mooti\Validator\Exception\DataValidationException
      * @expectedExceptionMessage This value must have a length of at least 2
      */
     public function validateLengthTooSmallThrowsDataValidationException()
@@ -147,5 +152,39 @@ class StringValidatorTest extends \PHPUnit_Framework_TestCase
         $typeValidator = new StringValidator;
 
         $typeValidator->validateLength($data, $min, $max);
+    }
+
+    /**
+     * @test
+     * @expectedException \Mooti\Validator\Exception\InvalidRuleException
+     * @expectedExceptionMessage The enum property of This value needs to have at least one member
+     */
+    public function validateEnumTooFewMembersThrowsInvalidRuleException()
+    {
+        $constraints = [
+            'enum' => []
+        ];
+
+        $data = 'foo';
+
+        $typeValidator = new StringValidator;
+
+        $typeValidator->validate($constraints, $data);
+    }
+
+    /**
+     * @test
+     * @expectedException \Mooti\Validator\Exception\DataValidationException
+     * @expectedExceptionMessage test is not an allowed value for This value. Allowed values are: foo, bar
+     */
+    public function validateEnumlThrowsDataValidationException()
+    {
+        $enum = ['foo', 'bar'];
+
+        $data = 'test';
+
+        $typeValidator = new StringValidator;
+
+        $typeValidator->validateEnum($data, $enum);
     }
 }

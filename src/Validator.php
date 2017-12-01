@@ -18,6 +18,7 @@ use Mooti\Factory\Factory;
 use Mooti\Validator\Exception\InvalidRuleException;
 use Mooti\Validator\Exception\DataValidationException;
 use Mooti\Validator\Exception\InvalidTypeValidatorException;
+use Mooti\Validator\TypeValidator\TypeValidatorInterface;
 
 class Validator
 {
@@ -89,12 +90,16 @@ class Validator
 
             // All rules need to have a type
             if (isset($validationRule['type']) == false) {
-                throw new InvalidRuleException('All rules must have a "type" property');
+                throw new InvalidRuleException(
+                   sprintf('%s does not have a "type" property. All rules must have a "type" property', $itemKey)
+                );
             }
 
             // There can only be one rule if using wildcards
             if ($itemKey == '*' && count($validationRules) > 1) {
-                throw new InvalidRuleException('You cannot have more than one rule if using a wildcard');
+                throw new InvalidRuleException(
+                    sprintf('%s has more than one rule. You cannot have more than one rule if using a wildcard', $itemKey)
+                );
             }
 
             try {
@@ -122,6 +127,7 @@ class Validator
      * @param string $fullyQualifiedName The fully qualified name of the item being validated     
      *
      * @throws DataValidationException
+     * @throws InvalidRuleException
      */
     public function validateData(array $validationRule, $itemKey, $data, $fullyQualifiedName)
     {
@@ -130,7 +136,9 @@ class Validator
         } else {
             // All named rules need to let us know if they are required or not
             if (isset($validationRule['required']) == false) {
-                throw new InvalidRuleException('A named rule must have a "required" property');
+                throw new InvalidRuleException(
+                    sprintf('%s does not have a "required". All named rules must have a "required" property', $itemKey)
+                );
             }
 
             if ($validationRule['required'] == true && $this->propertyExists($itemKey, $data) == false) {
@@ -199,7 +207,7 @@ class Validator
     /**
      * Determines wether an object or array has a given property/key.
      *
-     * @param array  $property The name of the property/key
+     * @param string  $property The name of the property/key
      * @param array  $item     The item to check against
      *
      * @return boolean. Whether it exists or not
@@ -217,7 +225,7 @@ class Validator
     /**
      * Get a property/key from an object/arrray.
      *
-     * @param array  $property The name of the property/key
+     * @param string  $property The name of the property/key
      * @param array  $item     The item to retrieve from
      *
      * @return mixed The property/key value
