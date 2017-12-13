@@ -51,9 +51,24 @@ class StringValidator extends AbstractTypeValidator
             $this->validateEnum($data, $constraints['enum'], $prettyName);
         }
 
+        if (isset($constraints['regex'])) {
+            if (empty($constraints['regex'])) {
+                throw new InvalidRuleException(sprintf('The regex property of %s needs to be set', $prettyName));
+            }
+            $this->validateRegex($data, $constraints['regex'], $prettyName);
+        }
+
         parent::validate($constraints, $data, $prettyName);
     }
 
+    /**
+     * @param $data
+     * @param null $min
+     * @param null $max
+     * @param string $prettyName
+     * @return bool
+     * @throws DataValidationException
+     */
     public function validateLength($data, $min = null, $max = null, $prettyName = 'This value')
     {
         $length = strlen($data);
@@ -69,6 +84,13 @@ class StringValidator extends AbstractTypeValidator
         return true;
     }
 
+    /**
+     * @param $data
+     * @param array $enum
+     * @param string $prettyName
+     * @return bool
+     * @throws DataValidationException
+     */
     public function validateEnum($data, array $enum, $prettyName = 'This value')
     {
         if (in_array($data, $enum, true) == false) {
@@ -82,6 +104,32 @@ class StringValidator extends AbstractTypeValidator
             );
         }
 
+        return true;
+    }
+
+    /**
+     * @param $data
+     * @param $regex
+     * @param $prettyName
+     * @return bool
+     * @throws DataValidationException
+     * @throws InvalidRuleException
+     */
+    public function validateRegex($data, $regex, $prettyName = 'This value')
+    {
+        $match = @preg_match($regex, $data);
+        if ($match === 0) {
+            throw new DataValidationException(
+                sprintf(
+                    '%s is not an allowed value for %s. It does not match the regex: %s',
+                    $data,
+                    $prettyName,
+                    $regex
+                )
+            );
+        } elseif ($match === false) {
+            throw new InvalidRuleException(sprintf('An error occured. The regex for %s may be invalid', $prettyName));
+        }
         return true;
     }
 }

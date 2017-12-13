@@ -187,4 +187,68 @@ class StringValidatorTest extends \PHPUnit_Framework_TestCase
 
         $typeValidator->validateEnum($data, $enum);
     }
+
+    /**
+     * @test
+     * @expectedException \Mooti\Validator\Exception\InvalidRuleException
+     * @expectedExceptionMessage The regex property of This value needs to be set
+     */
+    public function validateRegexThrowsInvalidRuleException()
+    {
+        $constraints = [
+            'regex' => ''
+        ];
+
+        $data = 'foobar';
+
+        $typeValidator = new StringValidator;
+
+        $typeValidator->validate($constraints, $data);
+    }
+
+    /**
+     * @test
+     * @expectedException \Mooti\Validator\Exception\DataValidationException
+     * @expectedExceptionMessage bar is not an allowed value for This value. It does not match the regex: /foo/
+     */
+    public function validateRegexThrowsDataValidationException()
+    {
+        $regex = '/foo/';
+
+        $data = 'bar';
+
+        $typeValidator = new StringValidator;
+
+        $typeValidator->validateRegex($data, $regex);
+    }
+
+    /**
+     * @test
+     * @expectedException \Mooti\Validator\Exception\InvalidRuleException
+     * @expectedExceptionMessage An error occured. The regex for This value may be invalid
+     */
+    public function validateRegexThrowsInvalidRuleExceptionForInvalidRegex()
+    {
+        $regex = '/foo';
+
+        $data = 'bar';
+
+        $typeValidator = new StringValidator;
+
+        $typeValidator->validateRegex($data, $regex);
+    }
+
+    /**
+     * @test
+     */
+    public function validateRegexSucceeds()
+    {
+        $regex = '/foo/';
+
+        $data = 'foo';
+
+        $typeValidator = new StringValidator;
+
+        $typeValidator->validateRegex($data, $regex);
+    }
 }

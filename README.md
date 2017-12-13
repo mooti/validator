@@ -166,8 +166,10 @@ Each type also has additional properties.
    ```
    The string type validates the item as a string. it also has the following properties:   
    * **constraints** [*array*] : Exta constraints are:
-      * **length** [*array*] : the minimum and maximum length of the string as a numeric array in the format [min, max]. If you don't want to set a value set it to null. So [1,null] will be a string with a minimum of one character but no maximum set.
       * **enum** [*array*] : the possible values of the string. so [FOO, BAR] means that the string can only be one of those values and nothing else
+      * **length** [*array*] : the minimum and maximum length of the string as a numeric array in the format [min, max]. If you don't want to set a value set it to null. So [1,null] will be a string with a minimum of one character but no maximum set.
+      * **regex** [*string*] : A regular expression to match against. This needs to be a Perl Compatible Regular Expression (i.e `/foo/`) 
+      
 
 - **number**
 
