@@ -117,7 +117,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function dataToValidate()
     {
-        return [            
+        return [
             [[], false, ['name' => ['Name is required'], 'title' => ['Title is required']]],
             [['title' => 1], false, ['name' => ['Name is required'], 'title' => ['Title must be a string']]],
             [['title' => null], false, ['name' => ['Name is required']]],

@@ -24,16 +24,18 @@ class Validator
 {
     use Factory;
 
-    const TYPE_STRING = 'string';
-    const TYPE_NUMBER = 'number';
-    const TYPE_OBJECT = 'object';
-    const TYPE_ARRAY  = 'array';
+    const TYPE_STRING  = 'string';
+    const TYPE_NUMBER  = 'number';
+    const TYPE_OBJECT  = 'object';
+    const TYPE_ARRAY   = 'array';
+    const TYPE_BOOLEAN = 'boolean';
 
     protected $allowedTypeValidators = [
         self::TYPE_STRING,
         self::TYPE_NUMBER,
         self::TYPE_OBJECT,
-        self::TYPE_ARRAY
+        self::TYPE_ARRAY,
+        self::TYPE_BOOLEAN
     ];
 
     protected $errors = [];
