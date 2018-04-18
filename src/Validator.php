@@ -19,6 +19,7 @@ use Mooti\Validator\Exception\InvalidRuleException;
 use Mooti\Validator\Exception\DataValidationException;
 use Mooti\Validator\Exception\InvalidTypeValidatorException;
 use Mooti\Validator\TypeValidator\TypeValidatorInterface;
+use Psr\Log\InvalidArgumentException;
 
 class Validator
 {
@@ -165,10 +166,10 @@ class Validator
     /**
      * Validate a single item of data and any properties/items it has (if it is an object/array) using the given validation rule.
      *
-     * @param array  $validationRule     The rule to validate against
-     * @param string $item               The item to validate
+     * @param array $validationRule The rule to validate against
+     * @param string $item The item to validate
      * @param string $fullyQualifiedName The fully qualified name of the item being validated
-     *
+     * @throws InvalidRuleException
      */
     public function validateItem(array $validationRule, $item, $fullyQualifiedName)
     {
@@ -180,8 +181,37 @@ class Validator
 
         $validationType = $validationRule['type'];
 
+        if ($validationType == 'object' && isset($validationRule['inheritance']) && is_array($validationRule['inheritance'])) {
+            if (empty($validationRule['inheritance']['discriminator'])) {
+                throw new InvalidRuleException(sprintf('inheritance needs a discriminator in %s', $fullyQualifiedName));
+            }
+            $discriminator = $validationRule['inheritance']['discriminator'];
+            $discriminatorValue = $item->$discriminator ?? $item[$discriminator] ?? null;
+
+            $discriminatorRequired = $validationRule['properties'][$discriminator]['required'] ?? false;
+
+            if ($discriminatorRequired == false) {
+                throw new InvalidRuleException(sprintf(
+                    'discriminator %s in %s is has to be a required value',
+                    $discriminator,
+                    $fullyQualifiedName
+                ));
+            }
+            $extraProperties = $validationRule['inheritance']['properties'][strtolower($discriminatorValue)] ?? null;
+        } else {
+            $extraProperties = null;
+        }
+
         if ($validationType == 'object' && isset($validationRule['properties']) && is_array($validationRule['properties'])) {
-            $this->isValid($validationRule['properties'], $item, $fullyQualifiedName);
+
+            if (!empty($extraProperties)) {
+                $properties = array_merge($validationRule['properties'], $extraProperties);
+            } else {
+                $properties = $validationRule['properties'];
+            }
+
+            $this->isValid($properties, $item, $fullyQualifiedName);
+
         } elseif ($validationType == 'array' && isset($validationRule['items']) && is_array($validationRule['items'])) {
             $this->isValid($validationRule['items'], $item, $fullyQualifiedName);
         }

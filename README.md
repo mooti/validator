@@ -210,9 +210,72 @@ Each type also has additional properties.
             ]
         ]
     ]
+   ```   
+   with inheritance:
+   
+   ```
+    $rules = [
+       'animal' => [
+           'name'        => 'Animal',
+           'required'    => true,
+           'type'        => 'object',
+           'properties'  => [
+               'type' => [
+                   'required' => true,
+                   'type'     => 'string',
+                   'constraints' => [
+                       'enum' => ['cat', 'dog']
+                   ]
+               ],
+               'age'  => [
+                   'required' => true,
+                   'type'     => 'number',
+                   'constraints' => [
+                       'integer' => true
+                   ]
+               ]
+           ],
+           'inheritance' => [
+               'discriminator' => 'type',
+               'properties' => [
+                   'cat' => [
+                       'miceCaught' => [
+                           'required' => true,
+                           'type'     => 'number',
+                           'constraints' => [
+                               'integer' => true
+                           ]
+                       ]
+                   ],
+                   'dog' => [
+                       'carsChased' => [
+                           'required' => true,
+                           'type'     => 'number',
+                           'constraints' => [
+                               'integer' => true
+                           ]
+                       ],
+                       'collar' => [
+                           'required' => true,
+                           'type'     => 'object',
+                           'properties' => [
+                               'colour' => [
+                                   'required' => true,
+                                   'type' => 'string'
+                               ]
+                           ]
+                       ]
+                   ]
+               ]
+           ]
+       ]
+   ]
    ```
    The object type validates the item as an associative array/standard object. it also has the following properties:   
    * **properties** [*array*] : an optional associative array of rules for the object's properties. You can use a wildcard rule here.
+   * **inheritance** [*object*] : optional. Used inheritance. The child objects' properties are defined here. This hs the following properties
+        * **discriminator** [*string*] this is required. the property on the parent that will act as a discriminator
+        * **properties** [*object*] The properties of the children organised by child name
 
 - **array**
 
