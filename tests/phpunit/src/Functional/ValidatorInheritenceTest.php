@@ -23,7 +23,7 @@ class ValidatorInheritenceTest extends \PHPUnit_Framework_TestCase
                         'required' => true,
                         'type'     => 'string',
                         'constraints' => [
-                            'enum' => ['cat', 'dog']
+                            'enum' => ['cat', 'dog', 'mouse']
                         ]
                     ],
                     'age'  => [
@@ -64,7 +64,8 @@ class ValidatorInheritenceTest extends \PHPUnit_Framework_TestCase
                                     ]
                                 ]
                             ]
-                        ]
+                        ],
+                        'mouse' => []
                     ]
                 ]
             ]
@@ -88,7 +89,7 @@ class ValidatorInheritenceTest extends \PHPUnit_Framework_TestCase
                 'age'  => 2
             ]], false, [
                 'animal.type' => [
-                    'aardvark is not an allowed value for This value. Allowed values are: cat, dog'
+                    'aardvark is not an allowed value for This value. Allowed values are: cat, dog, mouse'
                 ]
             ]],
             [['animal' => [
@@ -132,6 +133,10 @@ class ValidatorInheritenceTest extends \PHPUnit_Framework_TestCase
                 'collar' => [
                     'colour' => 'red'
                 ]
+            ]], true, []],
+            [['animal' => [
+                'type' => 'mouse',
+                'age'  => 1
             ]], true, []]
         ];
     }
