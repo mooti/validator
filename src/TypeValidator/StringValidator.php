@@ -58,6 +58,10 @@ class StringValidator extends AbstractTypeValidator
             $this->validateRegex($data, $constraints['regex'], $prettyName);
         }
 
+        if (isset($constraints['email']) && $constraints['email'] === true) {
+            $this->validateEmailAddress($data);
+        }
+
         parent::validate($constraints, $data, $prettyName);
     }
 
@@ -132,4 +136,22 @@ class StringValidator extends AbstractTypeValidator
         }
         return true;
     }
+
+    /**
+    * @param string $emailAddress
+    *
+    * @return bool
+    * @throws DataValidationException
+    */
+    private function validateEmailAddress(string $emailAddress): bool
+    {
+        if (filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
+            return true;
+        }
+
+        throw new DataValidationException(
+            sprintf('%s is not a valid email address.', $emailAddress)
+        );
+    }
+
 }
