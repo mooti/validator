@@ -251,4 +251,21 @@ class StringValidatorTest extends \PHPUnit_Framework_TestCase
 
         $typeValidator->validateRegex($data, $regex);
     }
+
+    public function testValidateStringWithEmailConstraintSucceeds()
+    {
+        $stringValidator = new StringValidator();
+        $stringValidator->validate(['email'], 'user@host.tld');
+    }
+
+    /**
+     * @expectedException \Mooti\Validator\Exception\DataValidationException
+     * @expectedExceptionMessage invalidEmail is not a valid email address.
+     */
+    public function testValidateEmailAddressThrowsInvalidRuleException()
+    {
+        $stringValidator = new StringValidator();
+        $stringValidator->validate(['email' => true], 'invalidEmail');
+    }
+
 }
